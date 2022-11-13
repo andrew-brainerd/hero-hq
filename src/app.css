@@ -5,3 +5,14 @@
 .logo.preact:hover {
   filter: drop-shadow(0 0 2em #673ab8aa);
 }
+
+.song-list {
+  margin-top: 50px;
+}
+
+.song {
+  background-color: purple;
+  border: 2px solid black;
+  margin-top: 5px;
+  padding: 7px 5px;
+}

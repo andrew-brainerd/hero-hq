@@ -1,43 +1,62 @@
 import { useState } from 'preact/hooks';
 import preactLogo from './assets/preact.svg';
+import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api/tauri';
 import './app.css';
 
+interface Song {
+  artist: string;
+  track: string;
+}
+
+const isValidSong = (song: Song) => !!song.track && !song.artist.includes('Guitar Hero');
+
+const parseSongDir = (directory: string): Song => {
+  // Example: 'H:\\Games\\clonehero-win64\\songs\\Audioslave - Exploder'
+  const songData = directory.split('\\')[4].split('-');
+  const artist = songData[0]?.trim();
+  const track = songData[1]?.trim();
+
+  return { artist, track };
+};
+
+const getSongs = (songDirectories: Array<string>) => songDirectories.map(sd => parseSongDir(sd)).filter(isValidSong);
+
 export function App<FC>() {
   const [greetMsg, setGreetMsg] = useState<string>('');
-  const [name, setName] = useState<string>('');
+  const [songList, setSongList] = useState<Array<Song>>([]);
 
-  const greet = async () => {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke('greet', { name }));
+  const openDialog = async () => {
+    const directory = await open({
+      directory: true,
+      multiple: false
+    });
+
+    if (directory) {
+      console.log('Selected', directory);
+      await invoke<Array<string>>('open_songs_dir', { directory }).then(songDirectories => {
+        console.clear();
+        setSongList(getSongs(songDirectories));
+      });
+    }
   };
 
   return (
     <div class="container">
-      <h1>Welcome to Tauri!</h1>
-      <div class="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" class="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" class="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://preactjs.com" target="_blank">
-          <img src={preactLogo} class="logo preact" alt="Preact logo" />
-        </a>
-      </div>
-
-      <p>Click on the Tauri, Vite, and Preact logos to learn more.</p>
-
       <div class="row">
         <div>
-          <input id="greet-input" onChange={e => setName(e.currentTarget.value)} placeholder="Enter a name..." />
-          <button type="button" onClick={() => greet()}>
-            Greet
+          <button type="button" onClick={() => openDialog()}>
+            Select Songs Directory
           </button>
         </div>
       </div>
-      <p>{greetMsg}</p>
+      <div class="song-list">
+        {songList.map(song => (
+          <div className={'song'}>
+            {song.artist} - {song.track}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
