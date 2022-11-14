@@ -8,6 +8,14 @@ use std::fs::File;
 use std::path::Path;
 use walkdir::{DirEntry, WalkDir};
 
+pub fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipError> {
+  let zip_file = filename.to_string();
+
+  zip_song_directory(directory, filename, zip::CompressionMethod::Bzip2)?;
+
+  Ok(zip_file)
+}
+
 fn zip_dir<T>(
   it: &mut dyn Iterator<Item = DirEntry>,
   prefix: &str,

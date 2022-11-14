@@ -6,6 +6,7 @@ specifiers:
   '@tauri-apps/api': ^1.1.0
   '@tauri-apps/cli': ^1.1.0
   '@types/node': ^18.7.14
+  classnames: ^2.3.2
   husky: ^8.0.2
   lint-staged: ^13.0.3
   preact: ^10.10.1
@@ -15,6 +16,7 @@ specifiers:
 
 dependencies:
   '@tauri-apps/api': 1.2.0
+  classnames: 2.3.2
   preact: 10.11.2
 
 devDependencies:
@@ -587,6 +589,10 @@ packages:
       escape-string-regexp: 1.0.5
       supports-color: 5.5.0
     dev: true
+
+  /classnames/2.3.2:
+    resolution: { integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw== }
+    dev: false
 
   /clean-stack/2.2.0:
     resolution: { integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A== }

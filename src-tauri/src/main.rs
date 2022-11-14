@@ -10,7 +10,6 @@ use dotenv::dotenv;
 use log::info;
 use std::env;
 use std::fs;
-use zip::result::ZipError;
 
 #[tauri::command]
 fn get_local_songs(directory: &str) -> Vec<String> {
@@ -26,26 +25,24 @@ fn get_local_songs(directory: &str) -> Vec<String> {
 }
 
 #[tauri::command]
-async fn get_aws_bucket() -> String {
-    let bucket = aws::get_bucket().await;
+async fn upload_song(directory: &str, filename: &str, key: &str) -> Result<(), ()> {
+    zip_song(directory, filename);
+    upload_zip_to_s3(filename, key).await;
 
-    bucket.unwrap().to_string()
+    Ok(())
 }
 
-#[tauri::command]
+async fn upload_zip_to_s3(filename: &str, key: &str) -> String {
+    info!("Uploading zip to S3: {}", key);
+    aws::upload_object(filename, key).await;
+
+    "Zip file uploaded".to_owned()
+}
+
 fn zip_song(directory: &str, filename: &str) -> String {
-    info!("TIME TO ZIP A SONG: {}", directory);
-    let zip_file = create_zip_file(directory, filename);
+    let zip_file = compress::create_zip_file(directory, filename);
 
     zip_file.unwrap().to_string()
-}
-
-fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipError> {
-    let zip_file = filename.to_string();
-
-    compress::zip_song_directory(directory, filename, zip::CompressionMethod::Bzip2)?;
-
-    Ok(zip_file)
 }
 
 fn main() {
@@ -54,8 +51,7 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             get_local_songs,
-            get_aws_bucket,
-            zip_song
+            upload_song
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

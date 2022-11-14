@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api/tauri';
+import cn from 'classnames';
 import './app.css';
 
 interface Song {
@@ -8,9 +9,11 @@ interface Song {
   artist: string;
   track: string;
   parentDirectory: string;
+  isUploading?: boolean;
+  isUploaded?: boolean;
 }
 
-const isValidSong = (song: Song) => !!song.track && !song.artist.includes('Guitar Hero') && song.track === 'Always Summer';
+const isValidSong = (song: Song) => !!song.track && !song.artist.includes('Guitar Hero');
 
 const parseSongDir = (parent: string, directory: string): Song => {
   // Example: 'H:\\Games\\clonehero-win64\\songs\\Audioslave - Exploder'
@@ -21,7 +24,7 @@ const parseSongDir = (parent: string, directory: string): Song => {
   return { directory, artist, track, parentDirectory: parent };
 };
 
-const getSongs = (parent, songDirectories: Array<string>) => songDirectories.map(sd => parseSongDir(parent, sd)).filter(isValidSong);
+const getSongs = (parent: string, songDirectories: Array<string>) => songDirectories.map(sd => parseSongDir(parent, sd)).filter(isValidSong);
 
 export function App<FC>() {
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -47,19 +50,39 @@ export function App<FC>() {
     }
   };
 
-  const printAwsBuckets = async () => {
-    console.log('Printing AWS Buckets...');
-    await invoke('get_aws_bucket').then(bucket => {
-      console.log('Bucket:', bucket);
-    });
-  };
-
-  const generateZipFile = async (parentDirectory: string, songDirectory: string, filename: string) => {
+  const uploadSong = async (parentDirectory: string, songDirectory: string, filename: string) => {
     // const outputPath = `${parentDirectory}\\${filename}`;
+    setSongList(
+      songList.map(song => {
+        if (filename.includes(song.artist) && filename.includes(song.track)) {
+          return {
+            ...song,
+            isUploading: true
+          };
+        }
+
+        return song;
+      })
+    );
     const outputPath = `C:\\Users\\drwb3\\hero-hq\\${filename}`;
     console.log('Generating Zip File at', outputPath);
-    await invoke<string>('zip_song', { directory: songDirectory, filename: outputPath }).then(zip => {
+    await invoke<string>('upload_song', { directory: songDirectory, filename: outputPath, key: filename }).then(zip => {
       console.log('Zip File:', zip);
+      setTimeout(() => {
+        setSongList(
+          songList.map(song => {
+            if (filename.includes(song.artist) && filename.includes(song.track)) {
+              return {
+                ...song,
+                isUploading: false,
+                isUploaded: true
+              };
+            }
+
+            return song;
+          })
+        );
+      }, 1000);
     });
   };
 
@@ -74,17 +97,13 @@ export function App<FC>() {
           </div>
         ) : null}
       </div>
-      <div class="row">
-        <div className={'aws-test'} style="margin-top: 25px;">
-          <button type="button" onClick={() => printAwsBuckets()}>
-            BUCKETS
-          </button>
-        </div>
-      </div>
       {errorMessage ? <div className={'error'}>{errorMessage}</div> : null}
       <div class="song-list">
         {songList.map(song => (
-          <div className={'song'} onClick={() => generateZipFile(song.parentDirectory, song.directory, `${song.artist} - ${song.track}.zip`)}>
+          <div
+            className={cn('song', { uploading: song.isUploading }, { uploaded: song.isUploaded })}
+            onClick={() => uploadSong(song.parentDirectory, song.directory, `${song.artist} - ${song.track}.zip`)}
+          >
             {song.artist} - {song.track}
           </div>
         ))}
