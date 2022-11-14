@@ -16,6 +16,8 @@
   cursor: pointer;
   margin-top: 5px;
   padding: 7px 5px;
+  transition: 0.3s all ease;
+  transition-delay: 0.5s;
 }
 
 .song.uploading {
@@ -25,6 +27,10 @@
 
 .song.uploaded {
   background-color: green;
+}
+
+.song:hover {
+  padding: 75px 5px;
 }
 
 .song:not(.uploaded):not(.uploading):hover {

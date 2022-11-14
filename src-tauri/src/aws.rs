@@ -29,12 +29,26 @@ pub async fn get_bucket() -> Result<String, Error> {
     Ok(hq_bucket)
 }
 
-pub async fn upload_object(
-    file_name: &str,
-    key: &str,
-) -> Result<(), Error> {
+pub async fn get_bucket_objects() -> Result<Vec<String>, Error> {
     let client: Client = create_client().await;
-    let body = ByteStream::from_path(Path::new(file_name)).await;
+    let objects = client.list_objects_v2().bucket(env::var("AWS_BUCKET").unwrap().to_string()).send().await?;
+
+    let mut song_list: Vec<String> = Vec::new();
+
+    for obj in objects.contents().unwrap_or_default() {
+        let key = obj.key().unwrap().to_owned();
+        song_list.push(key);
+    }
+
+    Ok(song_list)
+}
+
+pub async fn upload_object(
+    filename: &str,
+    key: &str,
+) -> Result<String, Error> {
+    let client: Client = create_client().await;
+    let body = ByteStream::from_path(Path::new(filename)).await;
     client
         .put_object()
         .bucket(env::var("AWS_BUCKET").unwrap().to_string())
@@ -43,7 +57,7 @@ pub async fn upload_object(
         .send()
         .await?;
 
-    println!("Uploaded file: {}", file_name);
+    println!("Uploaded file: {}", filename);
 
-    Ok(())
+    Ok(filename.to_owned())
 }

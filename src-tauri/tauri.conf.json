@@ -61,9 +61,9 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 1000,
         "resizable": true,
-        "title": "hero-hq",
+        "title": "Clone Hero HQ",
         "width": 800
       }
     ]

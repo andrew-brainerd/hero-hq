@@ -12,7 +12,14 @@ use std::env;
 use std::fs;
 
 #[tauri::command]
-fn get_local_songs(directory: &str) -> Vec<String> {
+async fn get_all_songs(directory: &str) -> Result<(Vec<String>, Vec<String>), ()> {
+    let local_songs = get_local_songs(directory).await.unwrap();
+    let uploaded_songs = get_uploaded_songs().await.unwrap();
+
+    Ok((local_songs, uploaded_songs))
+}
+
+async fn get_local_songs(directory: &str) -> Result<Vec<String>, ()> {
     let paths = fs::read_dir(directory).unwrap();
     let mut song_list: Vec<String> = Vec::new();
 
@@ -21,7 +28,14 @@ fn get_local_songs(directory: &str) -> Vec<String> {
         song_list.push(name);
     }
 
-    song_list
+    Ok(song_list)
+}
+
+async fn get_uploaded_songs() -> Result<Vec<String>, ()> {
+    let bucket_objects = aws::get_bucket_objects().await;
+    let songs = bucket_objects.unwrap();
+
+    Ok(songs)
 }
 
 #[tauri::command]
@@ -34,9 +48,9 @@ async fn upload_song(directory: &str, filename: &str, key: &str) -> Result<(), (
 
 async fn upload_zip_to_s3(filename: &str, key: &str) -> String {
     info!("Uploading zip to S3: {}", key);
-    aws::upload_object(filename, key).await;
+    let uploaded = aws::upload_object(filename, key).await.unwrap();
 
-    "Zip file uploaded".to_owned()
+    uploaded
 }
 
 fn zip_song(directory: &str, filename: &str) -> String {
@@ -50,7 +64,7 @@ fn main() {
     env_logger::init();
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            get_local_songs,
+            get_all_songs,
             upload_song
         ])
         .run(tauri::generate_context!())

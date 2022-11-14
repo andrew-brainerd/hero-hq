@@ -9,22 +9,25 @@ interface Song {
   artist: string;
   track: string;
   parentDirectory: string;
-  isUploading?: boolean;
-  isUploaded?: boolean;
+  isUploading: boolean;
+  isUploaded: boolean;
 }
 
 const isValidSong = (song: Song) => !!song.track && !song.artist.includes('Guitar Hero');
 
-const parseSongDir = (parent: string, directory: string): Song => {
+const parseSongDir = (parent: string, directory: string, uploadedSongs: Array<string>): Song => {
   // Example: 'H:\\Games\\clonehero-win64\\songs\\Audioslave - Exploder'
   const songData = directory.split('\\')[4].split('-');
   const artist = songData[0]?.trim();
   const track = songData[1]?.trim();
+  const isUploaded = !!uploadedSongs.find(song => song.includes(artist) && song.includes(track));
 
-  return { directory, artist, track, parentDirectory: parent };
+  return { directory, artist, track, parentDirectory: parent, isUploading: false, isUploaded };
 };
 
-const getSongs = (parent: string, songDirectories: Array<string>) => songDirectories.map(sd => parseSongDir(parent, sd)).filter(isValidSong);
+const getSongs = (parent: string, songDirectories: Array<string>, uploadedSongs: Array<string>) => {
+  return songDirectories.map(sd => parseSongDir(parent, sd, uploadedSongs)).filter(isValidSong);
+};
 
 export function App<FC>() {
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -38,10 +41,11 @@ export function App<FC>() {
     })) as string;
 
     if (directory && directory.includes('clonehero') && directory.includes('songs')) {
-      await invoke<Array<string>>('get_local_songs', { directory }).then(songDirectories => {
-        console.log('Setting song directory to ', directory);
+      await invoke<Array<Array<string>>>('get_all_songs', { directory }).then(([songDirectories, uploadedSongs]) => {
+        console.log('All Songs', songDirectories);
+        console.log('Uploaded Songs', uploadedSongs);
         setSongDirectory(directory);
-        setSongList(getSongs(directory, songDirectories));
+        setSongList(getSongs(directory, songDirectories, uploadedSongs));
         setErrorMessage('');
       });
     } else {
@@ -52,6 +56,8 @@ export function App<FC>() {
 
   const uploadSong = async (parentDirectory: string, songDirectory: string, filename: string) => {
     // const outputPath = `${parentDirectory}\\${filename}`;
+    const outputPath = `C:\\Users\\drwb3\\hero-hq\\${filename}`;
+
     setSongList(
       songList.map(song => {
         if (filename.includes(song.artist) && filename.includes(song.track)) {
@@ -64,25 +70,21 @@ export function App<FC>() {
         return song;
       })
     );
-    const outputPath = `C:\\Users\\drwb3\\hero-hq\\${filename}`;
-    console.log('Generating Zip File at', outputPath);
-    await invoke<string>('upload_song', { directory: songDirectory, filename: outputPath, key: filename }).then(zip => {
-      console.log('Zip File:', zip);
-      setTimeout(() => {
-        setSongList(
-          songList.map(song => {
-            if (filename.includes(song.artist) && filename.includes(song.track)) {
-              return {
-                ...song,
-                isUploading: false,
-                isUploaded: true
-              };
-            }
 
-            return song;
-          })
-        );
-      }, 1000);
+    await invoke<string>('upload_song', { directory: songDirectory, filename: outputPath, key: filename }).then(zip => {
+      setSongList(
+        songList.map(song => {
+          if (filename.includes(song.artist) && filename.includes(song.track)) {
+            return {
+              ...song,
+              isUploading: false,
+              isUploaded: true
+            };
+          }
+
+          return song;
+        })
+      );
     });
   };
 
