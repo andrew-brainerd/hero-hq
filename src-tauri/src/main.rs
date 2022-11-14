@@ -4,13 +4,16 @@
 )]
 
 pub mod aws;
+pub mod compress;
 
-use std::fs;
 use dotenv::dotenv;
+use log::info;
 use std::env;
+use std::fs;
+use zip::result::ZipError;
 
 #[tauri::command]
-fn open_songs_dir(directory: &str) -> Vec<String> {
+fn get_local_songs(directory: &str) -> Vec<String> {
     let paths = fs::read_dir(directory).unwrap();
     let mut song_list: Vec<String> = Vec::new();
 
@@ -29,11 +32,31 @@ async fn get_aws_bucket() -> String {
     bucket.unwrap().to_string()
 }
 
+#[tauri::command]
+fn zip_song(directory: &str, filename: &str) -> String {
+    info!("TIME TO ZIP A SONG: {}", directory);
+    let zip_file = create_zip_file(directory, filename);
+
+    zip_file.unwrap().to_string()
+}
+
+fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipError> {
+    let zip_file = filename.to_string();
+
+    compress::zip_song_directory(directory, filename, zip::CompressionMethod::Bzip2)?;
+
+    Ok(zip_file)
+}
+
 fn main() {
     dotenv().ok();
     env_logger::init();
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![open_songs_dir, get_aws_bucket])
+        .invoke_handler(tauri::generate_handler![
+            get_local_songs,
+            get_aws_bucket,
+            zip_song
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

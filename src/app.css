@@ -13,6 +13,11 @@
 .song {
   background-color: purple;
   border: 2px solid black;
+  cursor: pointer;
   margin-top: 5px;
   padding: 7px 5px;
+}
+
+.song:hover {
+  color: cyan;
 }
