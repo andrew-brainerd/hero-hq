@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api/tauri';
+import { Store } from 'tauri-plugin-store-api';
 import cn from 'classnames';
 import './app.css';
 
@@ -12,6 +13,8 @@ interface Song {
   isUploading: boolean;
   isUploaded: boolean;
 }
+
+const store = new Store('.settings.dat');
 
 const isValidSong = (song: Song) => !!song.track && !song.artist.includes('Guitar Hero');
 
@@ -34,17 +37,24 @@ export function App<FC>() {
   const [songDirectory, setSongDirectory] = useState<string>('');
   const [songList, setSongList] = useState<Array<Song>>([]);
 
+  const saveSongDirectory = async (directory: string) => {
+    setSongDirectory(directory);
+    await store.set('songDirectory', directory);
+  };
+
   const openDialog = async () => {
     const directory = (await open({
       directory: true,
       multiple: false
     })) as string;
 
+    openSongDirectory(directory);
+  };
+
+  const openSongDirectory = async (directory: string) => {
     if (directory && directory.includes('clonehero') && directory.includes('songs')) {
       await invoke<Array<Array<string>>>('get_all_songs', { directory }).then(([songDirectories, uploadedSongs]) => {
-        console.log('All Songs', songDirectories);
-        console.log('Uploaded Songs', uploadedSongs);
-        setSongDirectory(directory);
+        saveSongDirectory(directory);
         setSongList(getSongs(directory, songDirectories, uploadedSongs));
         setErrorMessage('');
       });
@@ -87,6 +97,15 @@ export function App<FC>() {
       );
     });
   };
+
+  const loadSettings = async () => {
+    const savedSongDirectory = (await store.get('songDirectory')) as string;
+    if (savedSongDirectory && songList.length === 0) {
+      openSongDirectory(savedSongDirectory);
+    }
+  };
+
+  loadSettings();
 
   return (
     <div class="container">

@@ -10,6 +10,7 @@ use dotenv::dotenv;
 use log::info;
 use std::env;
 use std::fs;
+use tauri_plugin_store::PluginBuilder;
 
 #[tauri::command]
 async fn get_all_songs(directory: &str) -> Result<(Vec<String>, Vec<String>), ()> {
@@ -63,6 +64,8 @@ fn main() {
     dotenv().ok();
     env_logger::init();
     tauri::Builder::default()
+        .plugin(PluginBuilder::default().build())
+        .plugin(tauri_plugin_window_state::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             get_all_songs,
             upload_song
