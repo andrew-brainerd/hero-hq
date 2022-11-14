@@ -3,7 +3,11 @@
     windows_subsystem = "windows"
 )]
 
+pub mod aws;
+
 use std::fs;
+use dotenv::dotenv;
+use std::env;
 
 #[tauri::command]
 fn open_songs_dir(directory: &str) -> Vec<String> {
@@ -18,9 +22,18 @@ fn open_songs_dir(directory: &str) -> Vec<String> {
     song_list
 }
 
+#[tauri::command]
+async fn get_aws_bucket() -> String {
+    let bucket = aws::get_bucket().await;
+
+    bucket.unwrap().to_string()
+}
+
 fn main() {
+    dotenv().ok();
+    env_logger::init();
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![open_songs_dir])
+        .invoke_handler(tauri::generate_handler![open_songs_dir, get_aws_bucket])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

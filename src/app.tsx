@@ -42,6 +42,13 @@ export function App<FC>() {
     }
   };
 
+  const printAwsBuckets = async () => {
+    console.log('Printing AWS Buckets...');
+    await invoke('get_aws_bucket').then(bucket => {
+      console.log('Bucket:', bucket);
+    });
+  };
+
   return (
     <div class="container">
       <div class="row">
@@ -52,6 +59,13 @@ export function App<FC>() {
             </button>
           </div>
         ) : null}
+      </div>
+      <div class="row">
+        <div className={'aws-test'} style="margin-top: 25px;">
+          <button type="button" onClick={() => printAwsBuckets()}>
+            BUCKETS
+          </button>
+        </div>
       </div>
       {errorMessage ? <div className={'error'}>{errorMessage}</div> : null}
       <div class="song-list">

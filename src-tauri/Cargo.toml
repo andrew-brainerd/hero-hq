@@ -1,8 +1,8 @@
 [package]
 name = "hero-hq"
-version = "0.0.0"
+version = "0.0.1"
 description = "A Tauri App"
-authors = ["you"]
+authors = ["andy"]
 license = ""
 repository = ""
 edition = "2021"
@@ -14,6 +14,11 @@ rust-version = "1.57"
 tauri-build = { version = "1.1", features = [] }
 
 [dependencies]
+aws-config = "0.51.0"
+aws-sdk-s3 = "0.21.0"
+dotenv = "*"
+env_logger = "0.9.0"
+log = "*"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.1", features = ["api-all"] }
