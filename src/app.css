@@ -1,13 +1,9 @@
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
-
-.logo.preact:hover {
-  filter: drop-shadow(0 0 2em #673ab8aa);
-}
-
-.song-list {
+.song-select {
   margin-top: 50px;
+}
+
+.error {
+  background-color: red;
 }
 
 .song {

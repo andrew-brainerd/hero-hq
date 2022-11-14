@@ -1,5 +1,4 @@
 import { useState } from 'preact/hooks';
-import preactLogo from './assets/preact.svg';
 import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api/tauri';
 import './app.css';
@@ -23,7 +22,7 @@ const parseSongDir = (directory: string): Song => {
 const getSongs = (songDirectories: Array<string>) => songDirectories.map(sd => parseSongDir(sd)).filter(isValidSong);
 
 export function App<FC>() {
-  const [greetMsg, setGreetMsg] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [songList, setSongList] = useState<Array<Song>>([]);
 
   const openDialog = async () => {
@@ -32,24 +31,29 @@ export function App<FC>() {
       multiple: false
     });
 
-    if (directory) {
-      console.log('Selected', directory);
+    if (directory && directory.includes('clonehero') && directory.includes('songs')) {
       await invoke<Array<string>>('open_songs_dir', { directory }).then(songDirectories => {
-        console.clear();
         setSongList(getSongs(songDirectories));
+        setErrorMessage('');
       });
+    } else {
+      setSongList([]);
+      setErrorMessage('Invalid songs directory provided. Please try again.');
     }
   };
 
   return (
     <div class="container">
       <div class="row">
-        <div>
-          <button type="button" onClick={() => openDialog()}>
-            Select Songs Directory
-          </button>
-        </div>
+        {true || songList.length === 0 || errorMessage ? (
+          <div className={'song-select'}>
+            <button type="button" onClick={() => openDialog()}>
+              Select Songs Directory
+            </button>
+          </div>
+        ) : null}
       </div>
+      {errorMessage ? <div className={'error'}>{errorMessage}</div> : null}
       <div class="song-list">
         {songList.map(song => (
           <div className={'song'}>
