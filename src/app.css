@@ -8,6 +8,7 @@
 
 .error {
   background-color: red;
+  margin-top: 50px;
 }
 
 .song {
@@ -27,10 +28,6 @@
 
 .song.uploaded {
   background-color: green;
-}
-
-.song:hover {
-  padding: 75px 5px;
 }
 
 .song:not(.uploaded):not(.uploading):hover {

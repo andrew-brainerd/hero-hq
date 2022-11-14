@@ -5,6 +5,7 @@
 
 pub mod aws;
 pub mod compress;
+pub mod audio;
 
 use dotenv::dotenv;
 use log::info;
@@ -43,6 +44,7 @@ async fn get_uploaded_songs() -> Result<Vec<String>, ()> {
 async fn upload_song(directory: &str, filename: &str, key: &str) -> Result<(), ()> {
     zip_song(directory, filename);
     upload_zip_to_s3(filename, key).await;
+    audio::upload_complete();
 
     Ok(())
 }
@@ -55,6 +57,7 @@ async fn upload_zip_to_s3(filename: &str, key: &str) -> String {
 }
 
 fn zip_song(directory: &str, filename: &str) -> String {
+    // audio::play_song(directory, 20);
     let zip_file = compress::create_zip_file(directory, filename);
 
     zip_file.unwrap().to_string()

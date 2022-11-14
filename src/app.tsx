@@ -34,11 +34,9 @@ const getSongs = (parent: string, songDirectories: Array<string>, uploadedSongs:
 
 export function App<FC>() {
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [songDirectory, setSongDirectory] = useState<string>('');
   const [songList, setSongList] = useState<Array<Song>>([]);
 
   const saveSongDirectory = async (directory: string) => {
-    setSongDirectory(directory);
     await store.set('songDirectory', directory);
   };
 
