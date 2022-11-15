@@ -24,9 +24,15 @@
 .song.uploading {
   background-color: lightyellow;
   color: black;
+  margin: 100px auto;
+  padding: 75px 5px;
 }
 
-.song.uploaded {
+.song.uploading::before {
+  content: 'Uploading ';
+}
+
+.song.uploaded:not(.uploading) {
   background-color: green;
 }
 
