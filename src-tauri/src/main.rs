@@ -41,20 +41,23 @@ async fn get_uploaded_songs() -> Result<Vec<String>, ()> {
 }
 
 #[tauri::command]
-async fn upload_song(directory: &str, filename: &str, key: &str) -> Result<(), ()> {
-    zip_song(directory, filename);
-    upload_zip_to_s3(filename, key).await;
+async fn upload_song(directory: &str, filename: &str, key: &str) -> Result<String, ()> {
+    let zipped_song = zip_song(directory, filename);
+    let uploaded_song = upload_zip_to_s3(filename, key).await;
     audio::upload_complete();
     // audio::play_song(directory, 7);
 
-    Ok(())
+    info!("Zipped Song: {zipped_song}");
+    info!("Uploaded Song: {uploaded_song}");
+
+    Ok(key.to_owned())
 }
 
 async fn upload_zip_to_s3(filename: &str, key: &str) -> String {
     info!("Uploading zip to S3: {}", key);
-    let uploaded = aws::upload_object(filename, key).await.unwrap();
+    let _uploaded = aws::upload_object(filename, key).await.unwrap();
 
-    uploaded
+    key.to_owned()
 }
 
 fn zip_song(directory: &str, filename: &str) -> String {

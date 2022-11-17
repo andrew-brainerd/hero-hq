@@ -1,0 +1,31 @@
+.container {
+  padding-top: 0 !important;
+}
+
+.song-select {
+  margin-top: 50px;
+}
+
+.row.views {
+  justify-content: space-evenly;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+.views .view {
+  cursor: pointer;
+  font-size: 1.1em;
+}
+
+.views .view:hover {
+  text-decoration: underline;
+}
+
+.views .view.selected {
+  color: cyan;
+}
+
+.error {
+  background-color: red;
+  margin-top: 50px;
+}

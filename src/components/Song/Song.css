@@ -1,0 +1,20 @@
+.song {
+  background-color: darkblue;
+  border: 2px solid black;
+  cursor: pointer;
+  margin-top: 5px;
+  padding: 7px 5px;
+}
+
+.song.uploading {
+  background-color: darkgoldenrod;
+  color: black;
+}
+
+.song.uploaded:not(.uploading) {
+  background-color: darkslategrey;
+}
+
+.song:not(.uploaded):not(.uploading):hover {
+  color: cyan;
+}
