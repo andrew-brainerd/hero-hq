@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import { Song as SongType } from '../../types';
+import { getBucketKey } from '../../utils/songs';
 
 import './Song.css';
 
@@ -9,12 +10,12 @@ interface ComponentProps {
 
 type SongProps = SongType & ComponentProps;
 
-const Song = ({ artist, track, directory, parentDirectory, isUploading, isUploaded, onClick }: SongProps) => {
-  const bucketKey = `${artist} - ${track}.zip`;
+const Song = (props: SongProps) => {
+  const { artist, track, directory, parentDirectory, isUploading, isUploaded, onClick } = props;
   return (
     <div
       className={cn('song', { uploading: isUploading }, { uploaded: isUploaded })}
-      onClick={() => onClick(parentDirectory, directory, bucketKey)}
+      onClick={() => onClick(parentDirectory, directory, getBucketKey(props))}
     >
       {artist} - {track}
     </div>

@@ -28,3 +28,5 @@ export const getLocalSongs = (parent: string, songDirectories: Array<string>, up
   songDirectories.map(sd => getLocalSongData(parent, sd, uploadedSongs)).filter(isValidSong);
 
 export const getRemoteSongs = (uploadedSongs: Array<string>) => uploadedSongs.map(sd => getRemoteSongData(sd));
+
+export const getBucketKey = (song: Song) => `${song.artist} - ${song.track}.zip`;
