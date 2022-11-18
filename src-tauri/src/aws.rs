@@ -1,10 +1,7 @@
-// extern crate ini;
-
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_s3::{types::ByteStream, Client, Error};
 use ini::Ini;
 use log::info;
-use std::env;
 use std::io::{BufWriter, Write};
 use std::{fs::File, path::Path};
 use tauri::api::path::home_dir;
