@@ -15,7 +15,7 @@ async fn create_client() -> Client {
     client
 }
 
-pub async fn download_object(key: &str) -> Result<String, std::io::Error> {
+pub async fn download_object(directory: &str, key: &str) -> Result<String, std::io::Error> {
     let client: Client = create_client().await;
     let bucket = get_bucket().await.unwrap();
     let resp = client
@@ -25,7 +25,7 @@ pub async fn download_object(key: &str) -> Result<String, std::io::Error> {
         .send()
         .await;
 
-    let file_path = format!("C:/temp/{key}.zip");
+    let file_path = format!("{directory}/{key}");
     let mut data: ByteStream = resp.unwrap().body;
     let file = File::create(&file_path)?;
     let mut buf_writer = BufWriter::new(file);
@@ -34,7 +34,9 @@ pub async fn download_object(key: &str) -> Result<String, std::io::Error> {
     }
     buf_writer.flush()?;
 
-    Ok(key.to_owned())
+    info!("Downloaded file \"{}\" to {}", key, directory);
+
+    Ok(file_path.to_owned())
 }
 
 pub async fn get_bucket() -> Result<String, Error> {
@@ -73,7 +75,7 @@ pub async fn upload_object(filename: &str, key: &str) -> Result<String, Error> {
         .send()
         .await?;
 
-    info!("Uploaded file: {}", filename);
+    info!("Uploaded file: \"{}\"", filename);
 
     Ok(filename.to_owned())
 }

@@ -26,7 +26,8 @@ const Song = (props: SongProps) => {
   };
 
   const download = async (bucketKey: string) => {
-    await invoke<string>(DOWNLOAD_SONG, { key: bucketKey }).then(downloaded => {
+    console.log(`Downloading ${bucketKey} to ${directory}`);
+    await invoke<string>(DOWNLOAD_SONG, { directory, key: bucketKey }).then(downloaded => {
       songDownloaded(downloaded);
       sendNotification({ title: 'Song Downloaded', body: downloaded });
     });

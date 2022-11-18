@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import HeroContext from '../../context';
 import { GET_ALL_SONGS } from '../../constants/rust';
 import { getSongDirectory, saveSongDirectory } from '../../utils/store';
-import { getLocalSongs, getDownloadableSongs, getBucketKey } from '../../utils/songs';
+import { getLocalSongs, getDownloadableSongs } from '../../utils/songs';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -37,14 +37,9 @@ const Settings = ({ isOpen, close }: SettingsProps) => {
       log('Valid directory provided woo');
       await invoke<Array<Array<string>>>(GET_ALL_SONGS, { directory }).then(([songDirectories, uploadedSongs]) => {
         log(`GET_ALL_SONGS Invoked [local: ${songDirectories.length}, remote: ${uploadedSongs.length}]`);
-        // songDirectories.forEach(song => log(song));
-        // uploadedSongs.forEach(song => log(song));
 
         const myLocalSongs = getLocalSongs(directory, songDirectories, uploadedSongs);
-        const myDownloadableSongs = getDownloadableSongs(myLocalSongs, uploadedSongs);
-
-        // myLocalSongs.forEach(song => log(getBucketKey(song)));
-        // myDownloadableSongs.forEach(song => log(getBucketKey(song)));
+        const myDownloadableSongs = getDownloadableSongs(directory, myLocalSongs, uploadedSongs);
 
         saveSongDirectory(directory);
         setLocalSongs(myLocalSongs);

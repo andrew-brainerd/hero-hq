@@ -15,10 +15,14 @@ pub async fn get_local_songs(directory: &str) -> Result<Vec<String>, ()> {
   Ok(song_list)
 }
 
-pub async fn download_zip_from_s3(key: &str) -> String {
-  info!("Downloading zip from S3 {}", key);
+pub async fn download_zip_from_s3(directory: &str, key: &str) -> String {
+  info!("Downloading zip from S3: {}", key);
   
-  aws::download_object(key).await.unwrap()
+  let zip_path = aws::download_object(directory, key).await.unwrap();
+  let output_directory = format!("{}\\{}", directory, key.replace(".zip", ""));
+  let song_downloaded = compress::upzip_file(&zip_path, &output_directory);
+
+  song_downloaded.unwrap().to_owned()
 }
 
 pub async fn get_uploaded_songs() -> Result<Vec<String>, ()> {

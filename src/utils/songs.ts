@@ -25,7 +25,7 @@ export const getLocalSongs = (parent: string, songDirectories: Array<string>, up
 
 export const getBucketKey = (song: Song) => `${song.artist} - ${song.track}.zip`;
 
-export const getSongFromKey = (key: string): Song => {
+export const getSongFromKey = (directory: string, key: string): Song => {
   const artistAndTrack = key.replace('.zip', '');
   const artist = artistAndTrack.split('-')[0].trim();
   const track = artistAndTrack.split('-')[1].trim();
@@ -33,13 +33,14 @@ export const getSongFromKey = (key: string): Song => {
   return {
     artist,
     track,
+    directory,
     isUploading: false,
     isUploaded: true,
     isDownloaded: false
   };
 };
 
-export const getDownloadableSongs = (localSongs: Array<Song>, uploadedSongs: Array<string>) =>
+export const getDownloadableSongs = (directory: string, localSongs: Array<Song>, uploadedSongs: Array<string>) =>
   uploadedSongs
-    .filter(uploadedSong => localSongs.find(localSong => getBucketKey(localSong) === uploadedSong))
-    .map(downloadKey => getSongFromKey(downloadKey));
+    .filter(uploadedSong => !localSongs.find(localSong => getBucketKey(localSong) === uploadedSong))
+    .map(downloadKey => getSongFromKey(directory, downloadKey));

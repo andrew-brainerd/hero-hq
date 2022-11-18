@@ -3,7 +3,7 @@ import Song from '../Song/Song';
 import HeroContext from '../../context';
 
 const Upload = () => {
-  const { localSongs, songUploaded } = useContext(HeroContext);
+  const { localSongs } = useContext(HeroContext);
 
   return (
     <div className={'upload'}>

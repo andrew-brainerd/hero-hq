@@ -24,23 +24,22 @@ async fn get_all_songs(directory: &str) -> Result<(Vec<String>, Vec<String>), ()
 #[tauri::command]
 async fn upload_song(directory: &str, output_file: &str, key: &str) -> Result<String, ()> {
     let zipped_song = hero::zip_song(directory, output_file);
+    info!("Zipped Song: {zipped_song}");
+
     let uploaded_song = hero::upload_zip_to_s3(output_file, key).await;
+    info!("Uploaded Song: {uploaded_song}");
+
     audio::upload_complete();
     // audio::play_song(directory, 7);
-
-    info!("Zipped Song: {zipped_song}");
-    info!("Uploaded Song: {uploaded_song}");
 
     Ok(key.to_owned())
 }
 
 #[tauri::command]
-async fn download_song(key: &str) -> Result<String, ()> {
-    info!("Time to download {key}");
+async fn download_song(directory: &str, key: &str) -> Result<String, ()> {
+    let zip_file = hero::download_zip_from_s3(directory, key).await;
 
-    let _zip_file = hero::download_zip_from_s3(key).await;
-
-    Ok("ass".to_owned())
+    Ok(zip_file.to_owned())
 }
 
 fn main() {
