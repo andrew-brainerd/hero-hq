@@ -1,9 +1,13 @@
+// extern crate ini;
+
 use aws_config::meta::region::RegionProviderChain;
-use aws_sdk_s3::{Client, Error, types::ByteStream};
+use aws_sdk_s3::{types::ByteStream, Client, Error};
+use ini::Ini;
 use log::info;
-use std::io::{BufWriter, Write};
-use std::{path::Path, fs::File};
 use std::env;
+use std::io::{BufWriter, Write};
+use std::{fs::File, path::Path};
+use tauri::api::path::home_dir;
 use tokio_stream::StreamExt;
 
 async fn create_client() -> Client {
@@ -16,7 +20,13 @@ async fn create_client() -> Client {
 
 pub async fn download_object(key: &str) -> Result<String, std::io::Error> {
     let client: Client = create_client().await;
-    let resp = client.get_object().bucket(env::var("AWS_BUCKET").unwrap().to_string()).key(key).send().await;
+    let bucket = get_bucket().await.unwrap();
+    let resp = client
+        .get_object()
+        .bucket(bucket)
+        .key(key)
+        .send()
+        .await;
 
     let file_path = format!("C:/temp/{key}.zip");
     let mut data: ByteStream = resp.unwrap().body;
@@ -31,25 +41,18 @@ pub async fn download_object(key: &str) -> Result<String, std::io::Error> {
 }
 
 pub async fn get_bucket() -> Result<String, Error> {
-    let client: Client = create_client().await;
-    let resp = client.list_buckets().send().await?;
-    let buckets = resp.buckets().unwrap_or_default();
-    let num_buckets = buckets.len();
-    let mut hq_bucket: String = "".to_owned();
-
-    for bucket in buckets {
-        hq_bucket = bucket.name().unwrap_or_default().to_string();
-        info!("Bucket: {}", bucket.name().unwrap_or_default());
-    }
-
-    info!("Found {} bucket(s)", num_buckets);
+    let home_dir = home_dir().unwrap().display().to_string();
+    let conf = Ini::load_from_file(format!("{home_dir}\\.aws\\credentials")).unwrap();
+    let section = conf.section(Some("hero-hq")).unwrap();
+    let hq_bucket = section.get("bucket").unwrap().to_owned();
 
     Ok(hq_bucket)
 }
 
 pub async fn get_bucket_objects() -> Result<Vec<String>, Error> {
     let client: Client = create_client().await;
-    let objects = client.list_objects_v2().bucket(env::var("AWS_BUCKET").unwrap().to_string()).send().await?;
+    let bucket = get_bucket().await.unwrap();
+    let objects = client.list_objects_v2().bucket(bucket).send().await?;
 
     let mut song_list: Vec<String> = Vec::new();
 
@@ -61,21 +64,19 @@ pub async fn get_bucket_objects() -> Result<Vec<String>, Error> {
     Ok(song_list)
 }
 
-pub async fn upload_object(
-    filename: &str,
-    key: &str,
-) -> Result<String, Error> {
+pub async fn upload_object(filename: &str, key: &str) -> Result<String, Error> {
     let client: Client = create_client().await;
+    let bucket = get_bucket().await.unwrap();
     let body = ByteStream::from_path(Path::new(filename)).await;
     client
         .put_object()
-        .bucket(env::var("AWS_BUCKET").unwrap().to_string())
+        .bucket(bucket)
         .key(key)
         .body(body.unwrap())
         .send()
         .await?;
 
-    println!("Uploaded file: {}", filename);
+    info!("Uploaded file: {}", filename);
 
     Ok(filename.to_owned())
 }
