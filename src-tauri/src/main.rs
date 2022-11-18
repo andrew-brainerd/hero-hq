@@ -3,47 +3,28 @@
     windows_subsystem = "windows"
 )]
 
-pub mod aws;
-pub mod compress;
-pub mod audio;
+mod audio;
+mod aws;
+mod compress;
+mod hero;
 
 use dotenv::dotenv;
 use log::info;
 use std::env;
-use std::fs;
 use tauri_plugin_store::PluginBuilder;
 
 #[tauri::command]
 async fn get_all_songs(directory: &str) -> Result<(Vec<String>, Vec<String>), ()> {
-    let local_songs = get_local_songs(directory).await.unwrap();
-    let uploaded_songs = get_uploaded_songs().await.unwrap();
+    let local_songs = hero::get_local_songs(directory).await.unwrap();
+    let uploaded_songs = hero::get_uploaded_songs().await.unwrap();
 
     Ok((local_songs, uploaded_songs))
 }
 
-async fn get_local_songs(directory: &str) -> Result<Vec<String>, ()> {
-    let paths = fs::read_dir(directory).unwrap();
-    let mut song_list: Vec<String> = Vec::new();
-
-    for path in paths {
-        let name = path.unwrap().path().display().to_string();
-        song_list.push(name);
-    }
-
-    Ok(song_list)
-}
-
-async fn get_uploaded_songs() -> Result<Vec<String>, ()> {
-    let bucket_objects = aws::get_bucket_objects().await;
-    let songs = bucket_objects.unwrap();
-
-    Ok(songs)
-}
-
 #[tauri::command]
-async fn upload_song(directory: &str, filename: &str, key: &str) -> Result<String, ()> {
-    let zipped_song = zip_song(directory, filename);
-    let uploaded_song = upload_zip_to_s3(filename, key).await;
+async fn upload_song(directory: &str, output_file: &str, key: &str) -> Result<String, ()> {
+    let zipped_song = hero::zip_song(directory, output_file);
+    let uploaded_song = hero::upload_zip_to_s3(output_file, key).await;
     audio::upload_complete();
     // audio::play_song(directory, 7);
 
@@ -53,17 +34,13 @@ async fn upload_song(directory: &str, filename: &str, key: &str) -> Result<Strin
     Ok(key.to_owned())
 }
 
-async fn upload_zip_to_s3(filename: &str, key: &str) -> String {
-    info!("Uploading zip to S3: {}", key);
-    let _uploaded = aws::upload_object(filename, key).await.unwrap();
+#[tauri::command]
+async fn download_song(key: &str) -> Result<String, ()> {
+    info!("Time to download {key}");
 
-    key.to_owned()
-}
+    let _zip_file = hero::download_zip_from_s3(key).await;
 
-fn zip_song(directory: &str, filename: &str) -> String {
-    let zip_file = compress::create_zip_file(directory, filename);
-
-    zip_file.unwrap().to_string()
+    Ok("ass".to_owned())
 }
 
 fn main() {
@@ -74,7 +51,8 @@ fn main() {
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             get_all_songs,
-            upload_song
+            upload_song,
+            download_song
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

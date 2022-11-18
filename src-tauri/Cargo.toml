@@ -16,15 +16,17 @@ tauri-build = { version = "1.1", features = [] }
 [dependencies]
 aws-config = "0.51.0"
 aws-sdk-s3 = "0.21.0"
-dotenv = "*"
+dotenv = "0.15.0"
 env_logger = "0.9.0"
-log = "*"
+log = "0.4.17"
 rodio = "0.16.0"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.1", features = ["dialog-open", "fs-all", "notification-all"] }
+serde_bytes = "0.11.7"
+tauri = { version = "1.1", features = ["dialog-open", "fs-all", "notification-all", "path-all"] }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/tauri-plugin-store", branch = "dev" }
 tauri-plugin-window-state = "0.1"
+tokio-stream = "0.1.11"
 walkdir = "2"
 zip = "0.6.3"
 

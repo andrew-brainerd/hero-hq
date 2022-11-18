@@ -3,10 +3,23 @@ import { AppState } from '../types';
 
 const initialState = {
   isSettingsOpen: false,
-  setIsSettingsOpen: () => {},
+  setIsSettingsOpen: () => {
+    console.log('setIsSettingsOpen');
+  },
   localSongs: [],
-  setLocalSongs: () => {},
-  songUploaded: () => {}
+  downloadableSongs: [],
+  setLocalSongs: () => {
+    console.log('setLocalSongs');
+  },
+  setDownloadableSongs: () => {
+    console.log('setDownloadableSongs');
+  },
+  songUploaded: () => {
+    console.log('songUploaded');
+  },
+  songDownloaded: () => {
+    console.log('songDownloaded');
+  }
 } as AppState;
 
 const HeroContext = createContext(initialState);

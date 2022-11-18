@@ -1,0 +1,22 @@
+{
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+  "root": true,
+  "rules": {
+    "semi": [2, "always"],
+    "operator-linebreak": [2, "after"],
+    "no-multiple-empty-lines": [2, { "max": 2 }],
+    "react-hooks/exhaustive-deps": "off",
+    "no-extra-boolean-cast": "off",
+    "generator-star-spacing": "off",
+    "yield-star-spacing": "off",
+    "space-before-function-paren": "off",
+    "multiline-ternary": "off",
+    "react/prop-types": "off"
+  }
+}

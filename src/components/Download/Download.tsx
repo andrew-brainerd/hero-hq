@@ -1,12 +1,13 @@
 import { useContext } from 'preact/hooks';
 import HeroContext from '../../context';
+import Song from '../Song/Song';
 
 const Download = () => {
-  const { localSongs } = useContext(HeroContext);
+  const { downloadableSongs } = useContext(HeroContext);
 
   return (
     <div className={'download'}>
-      <h1>Download Songs</h1>
+      {downloadableSongs.length ? downloadableSongs.map(songData => <Song {...songData} />) : <h1>No Downloads</h1>}
     </div>
   );
 };

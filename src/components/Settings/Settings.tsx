@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import HeroContext from '../../context';
 import { GET_ALL_SONGS } from '../../constants/rust';
 import { getSongDirectory, saveSongDirectory } from '../../utils/store';
-import { getLocalSongs } from '../../utils/songs';
+import { getLocalSongs, getDownloadableSongs, getBucketKey } from '../../utils/songs';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -12,9 +12,15 @@ interface SettingsProps {
 }
 
 const Settings = ({ isOpen, close }: SettingsProps) => {
-  const { setLocalSongs } = useContext(HeroContext);
+  const { setLocalSongs, setDownloadableSongs } = useContext(HeroContext);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [logMessages, setLogMessages] = useState<Array<string>>([]);
+
+  const log = (message: string) => {
+    console.log('Log Message:', message);
+    setLogMessages([...logMessages, message]);
+  };
 
   const openDialog = async () => {
     const directory = (await open({
@@ -26,15 +32,28 @@ const Settings = ({ isOpen, close }: SettingsProps) => {
   };
 
   const openSongDirectory = async (directory: string) => {
+    setLogMessages([`Opening song directory ${directory}`]);
     if (directory && directory.includes('clonehero') && directory.includes('songs')) {
+      log('Valid directory provided woo');
       await invoke<Array<Array<string>>>(GET_ALL_SONGS, { directory }).then(([songDirectories, uploadedSongs]) => {
+        log(`GET_ALL_SONGS Invoked [local: ${songDirectories.length}, remote: ${uploadedSongs.length}]`);
+        // songDirectories.forEach(song => log(song));
+        // uploadedSongs.forEach(song => log(song));
+
         const myLocalSongs = getLocalSongs(directory, songDirectories, uploadedSongs);
+        const myDownloadableSongs = getDownloadableSongs(myLocalSongs, uploadedSongs);
+
+        // myLocalSongs.forEach(song => log(getBucketKey(song)));
+        // myDownloadableSongs.forEach(song => log(getBucketKey(song)));
+
         saveSongDirectory(directory);
         setLocalSongs(myLocalSongs);
+        setDownloadableSongs(myDownloadableSongs);
         setErrorMessage('');
         close();
       });
     } else {
+      log('Invalid songs directory provided. Please try again.');
       setLocalSongs([]);
       setErrorMessage('Invalid songs directory provided. Please try again.');
     }
@@ -59,6 +78,11 @@ const Settings = ({ isOpen, close }: SettingsProps) => {
             Select Songs Directory
           </button>
         </div>
+      </div>
+      <div class="row" style={{ marginTop: 25 }}>
+        {logMessages.map(message => (
+          <div class="log-message">{message}</div>
+        ))}
       </div>
     </div>
   ) : null;

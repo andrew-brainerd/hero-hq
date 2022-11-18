@@ -1630,11 +1630,13 @@ dependencies = [
  "log",
  "rodio",
  "serde",
+ "serde_bytes",
  "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-store",
  "tauri-plugin-window-state",
+ "tokio-stream",
  "walkdir",
  "zip",
 ]
@@ -3266,6 +3268,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d193d69bae983fc11a79df82342761dfbf28a99fc8d203dca4c3c1b590948965"
 dependencies = [
  "serde_derive",
+]
+
+[[package]]
+name = "serde_bytes"
+version = "0.11.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cfc50e8183eeeb6178dcb167ae34a8051d63535023ae38b5d8d12beae193d37b"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
