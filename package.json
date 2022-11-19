@@ -1,7 +1,7 @@
 {
   "name": "hero-hq",
   "private": true,
-  "version": "0.0.8",
+  "version": "0.0.9",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,8 @@
     "make-pretty": "npx prettier --write --ignore-unknown .",
     "lint": "npx eslint src",
     "hq": "tauri dev",
-    "kevin": "cp -r src-tauri/target/release/bundle/msi Z:/"
+    "kevin": "cp -r src-tauri/target/release/bundle/msi Z:/",
+    "pineapple": "rm -rf src-tauri/target/release/bundle/msi && pnpm tauri build && pnpm kevin"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.1.0",

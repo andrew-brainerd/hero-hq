@@ -62,7 +62,12 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": false,
+      "endpoints": [
+        "https://gist.githubusercontent.com/andrew-brainerd/90debf3a85705c75a6b46461b9402077/raw/69044a6f0a9cd06f3132a976b6a61f58e5d642bf/release.json"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY4Rjg3Njg5NTBDMzI2NzYKUldSMkpzTlFpWGI0YUhXSlhQWDJmWXhWeUFMV1NDcDF3U09LbVEvQ1hiNFN4MkFMWjcwblkwRXEK"
     },
     "windows": [
       {
