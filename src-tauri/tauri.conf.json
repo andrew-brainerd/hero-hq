@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "hero-hq",
+    "productName": "Hero HQ",
     "version": "../package.json"
   },
   "tauri": {

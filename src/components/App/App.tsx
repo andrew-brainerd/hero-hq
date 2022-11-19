@@ -1,9 +1,9 @@
 import { useState } from 'preact/hooks';
 import cn from 'classnames';
 import HeroContext from '../../context';
-import { Song, SongList } from '../../types';
+import { SongList } from '../../types';
 import VIEWS from '../../constants/views';
-import { getBucketKey, getSongFromKey } from '../../utils/songs';
+import { getBucketKey } from '../../utils/songs';
 import Settings from '../Settings/Settings';
 import Upload from '../Upload/Upload';
 import Download from '../Download/Download';
@@ -18,13 +18,11 @@ export const App = () => {
 
   const songUploaded = (uploadedKey: string) => {
     setLocalSongs(localSongs.filter(song => getBucketKey(song) !== uploadedKey));
-    // setDownloadableSongs([...downloadableSongs, getSongFromKey(uploadedKey)]);
   };
 
   const songDownloaded = (downloadedKey: string) => {
     console.log('Downloaded song', downloadedKey);
-    // setLocalSongs([...downloadableSongs, getSongFromKey(downloadedKey)]);
-    // setDownloadableSongs(downloadableSongs.filter(song => getBucketKey(song) !== getBucketKey(downloadedSong)));
+    setDownloadableSongs(downloadableSongs.filter(song => getBucketKey(song) !== downloadedKey));
   };
 
   const context = {

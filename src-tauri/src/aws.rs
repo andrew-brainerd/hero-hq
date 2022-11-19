@@ -1,11 +1,11 @@
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_s3::{types::ByteStream, Client, Error};
 use ini::Ini;
-use log::info;
 use std::io::{BufWriter, Write};
 use std::{fs::File, path::Path};
 use tauri::api::path::home_dir;
 use tokio_stream::StreamExt;
+use crate::logging;
 
 async fn create_client() -> Client {
     let region_provider = RegionProviderChain::default_provider().or_else("us-east-1");
@@ -34,7 +34,7 @@ pub async fn download_object(directory: &str, key: &str) -> Result<String, std::
     }
     buf_writer.flush()?;
 
-    info!("Downloaded file \"{}\" to {}", key, directory);
+    logging::write_to_log(format!("Downloaded file \"{key}\" to {directory}"));
 
     Ok(file_path.to_owned())
 }
@@ -75,7 +75,7 @@ pub async fn upload_object(filename: &str, key: &str) -> Result<String, Error> {
         .send()
         .await?;
 
-    info!("Uploaded file: \"{}\"", filename);
+    logging::write_to_log(format!("Uploaded file: \"{filename}\""));
 
     Ok(filename.to_owned())
 }

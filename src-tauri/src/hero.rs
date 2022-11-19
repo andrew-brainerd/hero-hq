@@ -1,7 +1,7 @@
 use std::fs;
-use log::info;
 use crate::aws;
 use crate::compress;
+use crate::logging;
 
 pub async fn get_local_songs(directory: &str) -> Result<Vec<String>, ()> {
   let paths = fs::read_dir(directory).unwrap();
@@ -16,7 +16,7 @@ pub async fn get_local_songs(directory: &str) -> Result<Vec<String>, ()> {
 }
 
 pub async fn download_zip_from_s3(directory: &str, key: &str) -> String {
-  info!("Downloading zip from S3: {}", key);
+  logging::write_to_log(format!("Downloading zip from S3: {key}"));
   
   let zip_path = aws::download_object(directory, key).await.unwrap();
   let output_directory = format!("{}\\{}", directory, key.replace(".zip", ""));
@@ -33,7 +33,7 @@ pub async fn get_uploaded_songs() -> Result<Vec<String>, ()> {
 }
 
 pub async fn upload_zip_to_s3(filename: &str, key: &str) -> String {
-  info!("Uploading zip to S3: {}", key);
+  logging::write_to_log(format!("Uploading zip to S3: {}", key));
   let _uploaded = aws::upload_object(filename, key).await.unwrap();
 
   key.to_owned()

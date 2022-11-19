@@ -1,11 +1,11 @@
 import { useContext } from 'preact/hooks';
 import cn from 'classnames';
-import { sendNotification } from '@tauri-apps/api/notification';
 import { appDataDir } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/tauri';
 import HeroContext from '../../context';
 import { Song as SongProps } from '../../types';
 import { UPLOAD_SONG, DOWNLOAD_SONG } from '../../constants/rust';
+import { notify } from '../../utils/log';
 import { getBucketKey } from '../../utils/songs';
 
 import './Song.css';
@@ -19,17 +19,17 @@ const Song = (props: SongProps) => {
     const appDataDirPath = await appDataDir();
     const outputFile = `${appDataDirPath}\\${key}`;
 
-    await invoke<string>(UPLOAD_SONG, { directory, outputFile, key }).then(uploaded => {
-      songUploaded(uploaded);
-      sendNotification({ title: 'Song Uploaded', body: uploaded });
+    await invoke<string>(UPLOAD_SONG, { directory, outputFile, key }).then(uploadedKey => {
+      songUploaded(uploadedKey);
+      notify({ title: 'Song Uploaded', body: uploadedKey });
     });
   };
 
   const download = async (bucketKey: string) => {
     console.log(`Downloading ${bucketKey} to ${directory}`);
-    await invoke<string>(DOWNLOAD_SONG, { directory, key: bucketKey }).then(downloaded => {
-      songDownloaded(downloaded);
-      sendNotification({ title: 'Song Downloaded', body: downloaded });
+    await invoke<string>(DOWNLOAD_SONG, { directory, key: bucketKey }).then(downloadedKey => {
+      songDownloaded(downloadedKey);
+      notify({ title: 'Song Downloaded', body: downloadedKey });
     });
   };
 

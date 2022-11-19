@@ -1,4 +1,3 @@
-use log::info;
 use std::io::prelude::*;
 use std::io::{Seek, Write};
 use std::iter::Iterator;
@@ -7,6 +6,8 @@ use std::path::Path;
 use walkdir::{DirEntry, WalkDir};
 use zip::result::ZipError;
 use zip::write::FileOptions;
+
+use crate::logging;
 
 pub fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipError> {
     let zip_file = filename.to_string();
@@ -17,7 +18,7 @@ pub fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipErr
 }
 
 pub fn upzip_file(zip_path: &str, output_directory: &str) -> Result<String, ZipError> {
-    info!("Unzipping file: {} to {output_directory}", zip_path);
+    logging::write_to_log(format!("Unzipping file: {zip_path} to {output_directory}"));
     let zip_file = File::open(Path::new(&zip_path)).unwrap();
 
     let mut archive = zip::ZipArchive::new(zip_file).unwrap();
