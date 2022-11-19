@@ -16,12 +16,17 @@ export const App = () => {
   const [localSongs, setLocalSongs] = useState<SongList>([]);
   const [downloadableSongs, setDownloadableSongs] = useState<SongList>([]);
 
+  const songUploading = (uploadingKey: string) => {
+    setLocalSongs(
+      localSongs.map(song => (getBucketKey(song) === uploadingKey ? { ...song, isUploading: true } : song))
+    );
+  };
+
   const songUploaded = (uploadedKey: string) => {
     setLocalSongs(localSongs.filter(song => getBucketKey(song) !== uploadedKey));
   };
 
   const songDownloaded = (downloadedKey: string) => {
-    console.log('Downloaded song', downloadedKey);
     setDownloadableSongs(downloadableSongs.filter(song => getBucketKey(song) !== downloadedKey));
   };
 
@@ -32,6 +37,7 @@ export const App = () => {
     setIsSettingsOpen,
     setLocalSongs,
     setDownloadableSongs,
+    songUploading,
     songUploaded,
     songDownloaded
   };

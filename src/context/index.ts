@@ -14,6 +14,9 @@ const initialState = {
   setDownloadableSongs: () => {
     console.log('setDownloadableSongs');
   },
+  songUploading: () => {
+    console.log('songUploading');
+  },
   songUploaded: () => {
     console.log('songUploaded');
   },

@@ -5,6 +5,7 @@ export interface AppState {
   downloadableSongs: SongList;
   setLocalSongs: (songs: SongList) => void;
   setDownloadableSongs: (songs: SongList) => void;
+  songUploading: (key: string) => void;
   songUploaded: (key: string) => void;
   songDownloaded: (key: string) => void;
 }

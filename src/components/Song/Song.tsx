@@ -13,12 +13,13 @@ import './Song.css';
 const Song = (props: SongProps) => {
   const { artist, track, directory, isUploading, isUploaded } = props;
 
-  const { songUploaded, songDownloaded } = useContext(HeroContext);
+  const { songUploading, songUploaded, songDownloaded } = useContext(HeroContext);
 
   const upload = async (key: string) => {
     const appDataDirPath = await appDataDir();
     const outputFile = `${appDataDirPath}\\${key}`;
 
+    songUploading(key);
     await invoke<string>(UPLOAD_SONG, { directory, outputFile, key }).then(uploadedKey => {
       songUploaded(uploadedKey);
       notify({ title: 'Song Uploaded', body: uploadedKey });
