@@ -1,14 +1,12 @@
-use std::fmt::format;
+use log::info;
 use std::io::prelude::*;
 use std::io::{Seek, Write};
 use std::iter::Iterator;
-use log::info;
-use zip::result::ZipError;
-use zip::write::FileOptions;
-
 use std::fs::File;
 use std::path::Path;
 use walkdir::{DirEntry, WalkDir};
+use zip::result::ZipError;
+use zip::write::FileOptions;
 
 pub fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipError> {
     let zip_file = filename.to_string();

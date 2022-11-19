@@ -10,7 +10,7 @@ mod hero;
 
 use dotenv::dotenv;
 use log::info;
-use std::env;
+use std::{env, fs::remove_file};
 use tauri_plugin_store::PluginBuilder;
 
 #[tauri::command]
@@ -23,23 +23,26 @@ async fn get_all_songs(directory: &str) -> Result<(Vec<String>, Vec<String>), ()
 
 #[tauri::command]
 async fn upload_song(directory: &str, output_file: &str, key: &str) -> Result<String, ()> {
-    let zipped_song = hero::zip_song(directory, output_file);
-    info!("Zipped Song: {zipped_song}");
+    let zip_path = hero::zip_song(directory, output_file);
+    info!("Zipped Song: {zip_path}");
 
     let uploaded_song = hero::upload_zip_to_s3(output_file, key).await;
     info!("Uploaded Song: {uploaded_song}");
 
+    remove_file(&zip_path).unwrap();
+
     audio::upload_complete();
-    // audio::play_song(directory, 7);
 
     Ok(key.to_owned())
 }
 
 #[tauri::command]
 async fn download_song(directory: &str, key: &str) -> Result<String, ()> {
-    let zip_file = hero::download_zip_from_s3(directory, key).await;
+    let zip_path = hero::download_zip_from_s3(directory, key).await;
 
-    Ok(zip_file.to_owned())
+    remove_file(&zip_path).unwrap();
+
+    Ok(zip_path.to_owned())
 }
 
 fn main() {
