@@ -26,6 +26,12 @@ export const App = () => {
     setLocalSongs(localSongs.filter(song => getBucketKey(song) !== uploadedKey));
   };
 
+  const songDownloading = (downloadingKey: string) => {
+    setDownloadableSongs(
+      downloadableSongs.map(song => (getBucketKey(song) === downloadingKey ? { ...song, isDownloading: true } : song))
+    );
+  };
+
   const songDownloaded = (downloadedKey: string) => {
     setDownloadableSongs(downloadableSongs.filter(song => getBucketKey(song) !== downloadedKey));
   };
@@ -39,6 +45,7 @@ export const App = () => {
     setDownloadableSongs,
     songUploading,
     songUploaded,
+    songDownloading,
     songDownloaded
   };
 

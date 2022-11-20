@@ -20,6 +20,9 @@ const initialState = {
   songUploaded: () => {
     console.log('songUploaded');
   },
+  songDownloading: () => {
+    console.log('songDownloading');
+  },
   songDownloaded: () => {
     console.log('songDownloaded');
   }

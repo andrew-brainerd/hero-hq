@@ -11,22 +11,23 @@ import { getBucketKey } from '../../utils/songs';
 import './Song.css';
 
 const Song = (props: SongProps) => {
-  const { artist, track, directory, isUploading, isUploaded } = props;
+  const { artist, track, directory, isUploading, isUploaded, isDownloading } = props;
 
-  const { songUploading, songUploaded, songDownloaded } = useContext(HeroContext);
+  const { songUploading, songUploaded, songDownloading, songDownloaded } = useContext(HeroContext);
 
-  const upload = async (key: string) => {
+  const upload = async (bucketKey: string) => {
     const appDataDirPath = await appDataDir();
-    const outputFile = `${appDataDirPath}\\${key}`;
+    const outputFile = `${appDataDirPath}\\${bucketKey}`;
 
-    songUploading(key);
-    await invoke<string>(UPLOAD_SONG, { directory, outputFile, key }).then(uploadedKey => {
+    songUploading(bucketKey);
+    await invoke<string>(UPLOAD_SONG, { directory, outputFile, key: bucketKey }).then(uploadedKey => {
       songUploaded(uploadedKey);
       notify({ title: 'Song Uploaded', body: uploadedKey });
     });
   };
 
   const download = async (bucketKey: string) => {
+    songDownloading(bucketKey);
     await invoke<string>(DOWNLOAD_SONG, { directory, key: bucketKey }).then(downloadedKey => {
       songDownloaded(downloadedKey);
       notify({ title: 'Song Downloaded', body: downloadedKey });
@@ -35,7 +36,7 @@ const Song = (props: SongProps) => {
 
   return (
     <div
-      className={cn('song', { uploading: isUploading }, { uploaded: isUploaded })}
+      className={cn('song', { uploading: isUploading }, { uploaded: isUploaded }, { downloading: isDownloading })}
       onClick={() => (props.isUploaded ? download(getBucketKey(props)) : upload(getBucketKey(props)))}
     >
       {artist} - {track}

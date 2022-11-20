@@ -11,7 +11,12 @@
   color: black;
 }
 
-.song.uploaded:not(.uploading) {
+.song.downloading {
+  background-color: darkgoldenrod;
+  color: black;
+}
+
+.song.uploaded:not(.downloading) {
   background-color: darkslategrey;
 }
 

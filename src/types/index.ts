@@ -7,6 +7,7 @@ export interface AppState {
   setDownloadableSongs: (songs: SongList) => void;
   songUploading: (key: string) => void;
   songUploaded: (key: string) => void;
+  songDownloading: (key: string) => void;
   songDownloaded: (key: string) => void;
 }
 export interface Song {
@@ -14,6 +15,7 @@ export interface Song {
   track: string;
   isUploading: boolean;
   isUploaded: boolean;
+  isDownloading: boolean;
   isDownloaded: boolean;
   directory?: string;
   parentDirectory?: string;
