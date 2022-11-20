@@ -1,8 +1,10 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
+import { checkUpdate, installUpdate, onUpdaterEvent, UpdateResult } from '@tauri-apps/api/updater';
 import cn from 'classnames';
 import HeroContext from '../../context';
 import { SongList } from '../../types';
 import VIEWS from '../../constants/views';
+import { notify } from '../../utils/log';
 import { getBucketKey } from '../../utils/songs';
 import Settings from '../Settings/Settings';
 import Upload from '../Upload/Upload';
@@ -15,6 +17,31 @@ export const App = () => {
   const [selectedView, setSelectedView] = useState('upload');
   const [localSongs, setLocalSongs] = useState<SongList>([]);
   const [downloadableSongs, setDownloadableSongs] = useState<SongList>([]);
+
+  const checkAppUpdate = async () => {
+    console.log('Checking for app update...');
+
+    const unlisten = await onUpdaterEvent(({ error, status }) => {
+      if (error) {
+        notify({ title: 'Updater event', body: `Error: ${error}` });
+      }
+
+      if (status) {
+        notify({ title: 'Updater event', body: `Status: ${status}` });
+      }
+    });
+
+    const update = await checkUpdate();
+
+    console.log('Update', update);
+    if (update?.shouldUpdate) {
+      notify({
+        title: 'Updating App',
+        body: `Installing update ${update.manifest?.version}, ${update.manifest?.date}, ${update.manifest?.body}`
+      });
+      // await installUpdate();
+    }
+  };
 
   const songUploading = (uploadingKey: string) => {
     setLocalSongs(
@@ -29,6 +56,10 @@ export const App = () => {
   const songDownloaded = (downloadedKey: string) => {
     setDownloadableSongs(downloadableSongs.filter(song => getBucketKey(song) !== downloadedKey));
   };
+
+  useEffect(() => {
+    checkAppUpdate();
+  }, []);
 
   const context = {
     isSettingsOpen,

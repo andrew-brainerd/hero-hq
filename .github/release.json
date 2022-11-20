@@ -1,0 +1,10 @@
+{
+  "version": "v0.0.10",
+  "notes": "Download the MSI to get started",
+  "platforms": {
+    "windows-x86_64": {
+      "url": "https://github.com/andrew-brainerd/hero-hq/releases/download/hero-hq-v0.0.10/HeroHQ_0.0.10_x64_en-US.msi",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY4Rjg3Njg5NTBDMzI2NzYKUldSMkpzTlFpWGI0YUhXSlhQWDJmWXhWeUFMV1NDcDF3U09LbVEvQ1hiNFN4MkFMWjcwblkwRXEK",
+    }
+  }
+}
