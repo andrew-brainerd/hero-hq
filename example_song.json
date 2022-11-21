@@ -1,0 +1,77 @@
+{
+  "id": 51436,
+  "name": "Steadfast Horror",
+  "artist": "Brain Drill",
+  "album": "Boundless Obscenity",
+  "genre": "Technical Death Metal",
+  "year": "2016",
+  "charter": "LemonGH",
+  "length": 380,
+  "effectiveLength": 361,
+  "tier_band": null,
+  "tier_guitar": 6,
+  "tier_bass": null,
+  "tier_rhythm": null,
+  "tier_drums": null,
+  "tier_vocals": null,
+  "tier_keys": null,
+  "tier_guitarghl": null,
+  "tier_bassghl": null,
+  "diff_guitar": 8,
+  "diff_bass": null,
+  "diff_rhythm": null,
+  "diff_drums": null,
+  "diff_keys": null,
+  "diff_guitarghl": null,
+  "diff_bassghl": null,
+  "isPack": false,
+  "hasForced": true,
+  "hasOpen": {
+    "guitar": true
+  },
+  "hasTap": true,
+  "hasSections": true,
+  "hasStarPower": true,
+  "hasSoloSections": false,
+  "is120": false,
+  "hasStems": false,
+  "hasVideo": false,
+  "hasLyrics": true,
+  "hasNoAudio": false,
+  "needsRenaming": false,
+  "isFolder": true,
+  "hasBrokenNotes": false,
+  "hasBackground": true,
+  "noteCounts": {
+    "guitar": {
+      "x": 3625
+    }
+  },
+  "lastModified": null,
+  "uploadedAt": "2021-05-19T19:31:45.000Z",
+  "link": "https://drive.google.com/drive/folders/16BiZVaODXJBXzH2AKwqnkUAXxHmK30Rg",
+  "directLinks": {
+    "ini": "https://drive.google.com/uc?id=1u11mlLomKljVSFB_amRdoAEldqNSjXo1&export=download",
+    "chart": "https://drive.google.com/uc?id=1MKh4zTfkiryWt8TFLknntSTw9DLrfDNA&export=download",
+    "song.ogg": "https://drive.google.com/uc?id=17CU9FPK0xGiBxgk_pKDCETi2W_ntFo20&export=download",
+    "album.png": "https://drive.google.com/uc?id=1Wfpy3hV8rHE8WqDly_TBmztQJUe66YbZ&export=download"
+  },
+  "sources": [
+    {
+      "id": 8,
+      "name": "Verified Charters",
+      "link": "https://drive.google.com/drive/u/1/folders/1daRhysvylcEAvR8iGsnV-Kxy1C19x3d8",
+      "parent": {
+        "link": "https://drive.google.com/drive/folders/1QUb06d0_it-qSExni-ri1mkXVgcPFZ-o",
+        "name": "LemonGH Charts/Brain Drill - Discography (LemonGH)/Brain Drill - Boundless Obscenity Album (LemonGH)"
+      },
+      "isSetlist": false
+    }
+  ],
+  "hashes": {
+    "guitar": {
+      "x": "5fef423f81050d351a625cd38e623c13"
+    },
+    "file": "3747b091743f2a1df1d40fc7dcc09fea"
+  }
+}
