@@ -3,12 +3,15 @@
     windows_subsystem = "windows"
 )]
 
+mod api;
 mod audio;
 mod aws;
+mod chorus;
 mod compress;
 mod hero;
 mod logging;
 
+use chorus::SongsResponse;
 use dotenv::dotenv;
 use std::{env, fs::remove_file};
 use tauri_plugin_store::PluginBuilder;
@@ -47,6 +50,16 @@ async fn download_song(directory: &str, key: &str) -> Result<String, ()> {
 }
 
 #[tauri::command]
+async fn get_random_songs() -> Result<SongsResponse, ()> {
+    chorus::get_random_songs().await
+}
+
+#[tauri::command]
+async fn search_chorus_songs(query: &str) -> Result<SongsResponse, ()> {
+    chorus::search_songs(query).await
+}
+
+#[tauri::command]
 async fn write_to_log(message: &str) -> Result<String, ()> {
     logging::write_to_log(message.to_string());
 
@@ -63,6 +76,8 @@ fn main() {
             get_all_songs,
             upload_song,
             download_song,
+            get_random_songs,
+            search_chorus_songs,
             write_to_log
         ])
         .run(tauri::generate_context!())

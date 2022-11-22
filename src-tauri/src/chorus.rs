@@ -1,9 +1,12 @@
+use std::collections::HashMap;
+
+use display_json::{DisplayAsJsonPretty, DebugAsJsonPretty};
 use serde::{Deserialize, Serialize};
 use serde_json::Number;
 
-use crate::api;
+use crate::{api, logging::write_to_log};
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Clone, PartialEq, Serialize, Deserialize, DisplayAsJsonPretty, DebugAsJsonPretty)]
 #[serde(rename_all = "camelCase")]
 pub struct Song {
     id: i64,
@@ -59,45 +62,27 @@ pub struct Song {
     #[serde(skip_serializing_if = "Option::is_none")]
     uploaded_at: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    link: Option<String>
+    link: Option<String>,
+    direct_links: HashMap<String, String>
 }
 
-
-// #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-// #[serde(rename_all = "camelCase")]
-// pub struct Song {
-//     id: i64,
-//     name: String,
-//     artist: String,
-//     album: String,
-//     genre: String,
-//     year: String,
-//     charter: String,
-//     length: i64
-// }
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Clone, PartialEq, Serialize, Deserialize, DisplayAsJsonPretty, DebugAsJsonPretty)]
 #[serde(rename_all = "camelCase")]
-pub struct Roles {
-    parallaxdg: String,
-    rek3dge: String,
-    sygenysis: String,
-    neversoft: String,
-    smoochums: String,
-    acjgaming89: String,
-    zantor: String,
+pub struct SongsResponse {
+    pub songs: Vec<Song>
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct RandomSongsResponse {
-    pub songs: Vec<Song>,
-    // #[serde(skip_serializing)]
-    // pub roles: String,
-}
-
-pub async fn get_random_songs() -> Result<RandomSongsResponse, ()> {
+pub async fn get_random_songs() -> Result<SongsResponse, ()> {
     let url = "https://chorus.fightthe.pw/api/random";
-    // let url = "https://gist.githubusercontent.com/andrew-brainerd/3dfff32d608bec81685d04b6f662d609/raw/394410368dd2458ee7a552530c9025db2f328cb8/song.json";
+
     api::get_request(url).await
+}
+
+pub async fn search_songs(query: &str) -> Result<SongsResponse, ()> {
+    let url = format!("https://chorus.fightthe.pw/api/search?query={query}");
+    let search_results = api::get_request::<SongsResponse>(&url).await;
+    
+    write_to_log(format!("{:?}", search_results.as_ref().unwrap().songs[0]));
+
+    search_results
 }

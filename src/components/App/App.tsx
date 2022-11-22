@@ -7,6 +7,7 @@ import { getBucketKey } from '../../utils/songs';
 import Settings from '../Settings/Settings';
 import Upload from '../Upload/Upload';
 import Download from '../Download/Download';
+import Chorus from '../Chorus/Chorus';
 
 import './App.css';
 
@@ -73,8 +74,22 @@ export const App = () => {
           >
             Download
           </div>
+          <div
+            className={cn('view', { selected: selectedView === VIEWS.CHORUS })}
+            onClick={() => setSelectedView(VIEWS.CHORUS)}
+          >
+            Chorus
+          </div>
         </div>
-        <div class="song-list">{selectedView === VIEWS.UPLOAD ? <Upload /> : <Download />}</div>
+        <div class="song-list">
+          {
+            {
+              [VIEWS.UPLOAD]: <Upload />,
+              [VIEWS.DOWNLOAD]: <Download />,
+              [VIEWS.CHORUS]: <Chorus />
+            }[selectedView]
+          }
+        </div>
       </div>
     </HeroContext.Provider>
   );

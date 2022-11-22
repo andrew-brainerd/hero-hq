@@ -1,30 +1,32 @@
 import { createContext } from 'preact';
 import { AppState } from '../types';
 
+const { log } = window.console;
+
 const initialState = {
   isSettingsOpen: false,
   setIsSettingsOpen: () => {
-    console.log('setIsSettingsOpen');
+    log('setIsSettingsOpen');
   },
   localSongs: [],
   downloadableSongs: [],
   setLocalSongs: () => {
-    console.log('setLocalSongs');
+    log('setLocalSongs');
   },
   setDownloadableSongs: () => {
-    console.log('setDownloadableSongs');
+    log('setDownloadableSongs');
   },
   songUploading: () => {
-    console.log('songUploading');
+    log('songUploading');
   },
   songUploaded: () => {
-    console.log('songUploaded');
+    log('songUploaded');
   },
   songDownloading: () => {
-    console.log('songDownloading');
+    log('songDownloading');
   },
   songDownloaded: () => {
-    console.log('songDownloaded');
+    log('songDownloaded');
   }
 } as AppState;
 
