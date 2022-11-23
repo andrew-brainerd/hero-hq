@@ -1,10 +1,9 @@
-use std::collections::HashMap;
-
 use display_json::{DisplayAsJsonPretty, DebugAsJsonPretty};
 use serde::{Deserialize, Serialize};
 use serde_json::Number;
+use std::collections::HashMap;
 
-use crate::{api, logging::write_to_log};
+use crate::{api, logging::write_to_log, compress};
 
 #[derive(Default, Clone, PartialEq, Serialize, Deserialize, DisplayAsJsonPretty, DebugAsJsonPretty)]
 #[serde(rename_all = "camelCase")]
@@ -75,14 +74,34 @@ pub struct SongsResponse {
 pub async fn get_random_songs() -> Result<SongsResponse, ()> {
     let url = "https://chorus.fightthe.pw/api/random";
 
-    api::get_request(url).await
+    api::get_json_request(url).await
 }
 
 pub async fn search_songs(query: &str) -> Result<SongsResponse, ()> {
     let url = format!("https://chorus.fightthe.pw/api/search?query={query}");
-    let search_results = api::get_request::<SongsResponse>(&url).await;
-    
-    write_to_log(format!("{:?}", search_results.as_ref().unwrap().songs[0]));
+    let search_results = api::get_json_request::<SongsResponse>(&url).await;
 
     search_results
+}
+
+pub async fn download_song_file(url: &str, directory: &str, filename: &str, archived: bool) -> Result<String, ()> {
+    let downloaded_file = api::download_file(url, directory, filename).await;
+
+    match downloaded_file {
+        Ok(file_path) => {
+            if archived {
+                write_to_log(format!("Need to decompress {file_path} to {directory}"));
+                // compress::get_file_list(&file_path, directory);
+                let archive_info = compress::unzip_7z_file(&file_path, directory).unwrap();
+
+                return Ok(archive_info)
+            }
+
+            Ok(file_path)
+        },
+        Err(err) => {
+            let _ = write_to_log(err.to_string());
+            Ok("Download failed. Check the log for more info.".to_owned())
+        }
+    }
 }

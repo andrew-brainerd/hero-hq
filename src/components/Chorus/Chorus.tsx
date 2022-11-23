@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import { invoke } from '@tauri-apps/api/tauri';
-import useDebounce from '../../hooks/useDebounce';
-import { SEARCH_CHORUS_SONGS } from '../../constants/rust';
+import { SEARCH_CHORUS_SONGS, DOWNLOAD_CHORUS_FILE } from '../../constants/rust';
+import { getSongDirectory } from '../../utils/store';
 
 interface DirectLinks {
   [key: string]: string;
@@ -58,6 +58,21 @@ interface ChorusSongList {
   songs: Array<ChorusSong>;
 }
 
+const getFilename = (link: string) => {
+  switch (link) {
+    case 'album':
+      return 'album.png';
+    case 'archive':
+      return `${link}`;
+    case 'chart':
+      return 'notes.chart';
+    case 'ini':
+      return 'song.ini';
+    default:
+      return link;
+  }
+};
+
 const Chorus = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -70,6 +85,37 @@ const Chorus = () => {
       setSongList(songs);
       setIsLoading(false);
     });
+  };
+
+  const download = async (song: ChorusSong) => {
+    console.log('Downloading Song', song);
+    for (const link of Object.keys(song.directLinks)) {
+      const url = song.directLinks[link];
+      const songDirectory = await getSongDirectory();
+      const directory = `${songDirectory}\\${song.artist} - ${song.name}`;
+      const filename = getFilename(link);
+      const isArchive = link === 'archive';
+
+      console.log('Downloading File', { url, directory, filename, isArchive });
+
+      await invoke<string>(DOWNLOAD_CHORUS_FILE, { url, directory, filename, archived: isArchive }).then(output => {
+        console.log('Download output', output);
+
+        if (output.includes('7-Zip')) {
+          const foldersText = 'Folders: ';
+          const filesText = 'Files: ';
+          const folderIndex = output.indexOf(foldersText);
+          const fileIndex = output.indexOf(filesText);
+
+          const folderCount = output
+            .substring(folderIndex + foldersText.length, folderIndex + foldersText.length + 2)
+            .trim();
+          const fileCount = output.substring(fileIndex + filesText.length, fileIndex + filesText.length + 2).trim();
+
+          console.log({ folderCount, fileCount });
+        }
+      });
+    }
   };
 
   return (
@@ -89,15 +135,12 @@ const Chorus = () => {
         <div className={'container'}>
           {songList.map(song => (
             <>
-              <a className={'chorus-song'} style={{ marginTop: '15px' }} href={song.link}>
-                {song.name}
-              </a>
-              <div className={'links'}>
-                {Object.keys(song.directLinks).map(file => (
-                  <div className={'file'}>
-                    <a href={song.directLinks[file]}>{file}</a>
-                  </div>
-                ))}
+              <div
+                className={'chorus-song'}
+                style={{ marginTop: '15px', cursor: 'pointer' }}
+                onClick={() => download(song)}
+              >
+                {song.artist} - {song.name} {!!song.directLinks['archive'] ? '[Archive]' : ''}
               </div>
             </>
           ))}

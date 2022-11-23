@@ -26,7 +26,7 @@ const Settings = ({ isOpen, close }: SettingsProps) => {
   };
 
   const openSongDirectory = async (directory: string) => {
-    if (directory && directory.includes('clonehero') && directory.includes('songs')) {
+    if (directory && directory.includes('hero') && directory.includes('songs')) {
       await invoke<Array<Array<string>>>(GET_ALL_SONGS, { directory }).then(([songDirectories, uploadedSongs]) => {
         const myLocalSongs = getLocalSongs(directory, songDirectories, uploadedSongs);
         const myDownloadableSongs = getDownloadableSongs(directory, myLocalSongs, uploadedSongs);

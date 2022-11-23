@@ -1,13 +1,14 @@
+use std::fs::File;
 use std::io::prelude::*;
 use std::io::{Seek, Write};
 use std::iter::Iterator;
-use std::fs::File;
 use std::path::Path;
+use std::process::Command;
 use walkdir::{DirEntry, WalkDir};
 use zip::result::ZipError;
 use zip::write::FileOptions;
 
-use crate::logging;
+use crate::logging::{self, write_to_log};
 
 pub fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipError> {
     let zip_file = filename.to_string();
@@ -15,6 +16,45 @@ pub fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipErr
     zip_song_directory(directory, filename, zip::CompressionMethod::Bzip2)?;
 
     Ok(zip_file)
+}
+
+pub fn get_file_list(filename: &str, output_directory: &str) -> Result<String, ()> {
+    let zip_path = format!("{output_directory}\\{filename}");
+
+    write_to_log(format!("{output_directory}\\{filename}"));
+
+    let command_output = Command::new("7z")
+        .arg("l")
+        .arg(&zip_path)
+        .output()
+        .unwrap()
+        .stdout;
+
+    let string_output = String::from_utf8(command_output).unwrap().to_string();
+    write_to_log(string_output.to_owned());
+
+    Ok(string_output)
+}
+
+pub fn unzip_7z_file(filename: &str, output_directory: &str) -> Result<String, ()> {
+    logging::write_to_log(format!("Unzipping file: {filename} to {output_directory}"));
+    let zip_path = format!("{output_directory}\\{filename}");
+
+    write_to_log(format!("{output_directory}\\{filename}"));
+
+    let command_output = Command::new("7z")
+        .arg("x")
+        .arg(&zip_path)
+        .arg("-aos")
+        .current_dir(output_directory)
+        .output()
+        .unwrap()
+        .stdout;
+
+    let string_output = String::from_utf8(command_output).unwrap().to_string();
+    write_to_log(string_output.to_owned());
+
+    Ok(string_output)
 }
 
 pub fn upzip_file(zip_path: &str, output_directory: &str) -> Result<String, ZipError> {

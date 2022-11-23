@@ -60,6 +60,11 @@ async fn search_chorus_songs(query: &str) -> Result<SongsResponse, ()> {
 }
 
 #[tauri::command]
+async fn download_chorus_file(url: &str, directory: &str, filename: &str, archived: bool) -> Result<String, ()> {
+    chorus::download_song_file(url, directory, filename, archived).await
+}
+
+#[tauri::command]
 async fn write_to_log(message: &str) -> Result<String, ()> {
     logging::write_to_log(message.to_string());
 
@@ -78,6 +83,7 @@ fn main() {
             download_song,
             get_random_songs,
             search_chorus_songs,
+            download_chorus_file,
             write_to_log
         ])
         .run(tauri::generate_context!())
