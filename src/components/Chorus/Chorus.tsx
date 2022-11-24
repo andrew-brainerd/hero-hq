@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks';
 import { invoke } from '@tauri-apps/api/tauri';
-import { SEARCH_CHORUS_SONGS, DOWNLOAD_CHORUS_FILE } from '../../constants/rust';
+import { SEARCH_CHORUS_SONGS, DOWNLOAD_CHORUS_FILE, CLEANUP_ARCHIVE_FILES } from '../../constants/rust';
 import { getSongDirectory } from '../../utils/store';
 
 interface DirectLinks {
@@ -62,8 +62,6 @@ const getFilename = (link: string) => {
   switch (link) {
     case 'album':
       return 'album.png';
-    case 'archive':
-      return `${link}`;
     case 'chart':
       return 'notes.chart';
     case 'ini':
@@ -73,9 +71,16 @@ const getFilename = (link: string) => {
   }
 };
 
+const getCount = (str: string, text: string) => {
+  const textIndex = str.indexOf(text);
+  const stringValue = str.substring(textIndex + text.length, textIndex + text.length + 2).trim();
+
+  return parseInt(stringValue);
+};
+
 const Chorus = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('All Time Low');
   const [songList, setSongList] = useState<Array<ChorusSong>>([]);
 
   const searchChorus = async (query: string) => {
@@ -98,23 +103,25 @@ const Chorus = () => {
 
       console.log('Downloading File', { url, directory, filename, isArchive });
 
-      await invoke<string>(DOWNLOAD_CHORUS_FILE, { url, directory, filename, archived: isArchive }).then(output => {
-        console.log('Download output', output);
+      await invoke<string>(DOWNLOAD_CHORUS_FILE, { url, directory, filename, archived: isArchive }).then(
+        async output => {
+          console.log('Download output', output);
 
-        if (output.includes('7-Zip')) {
-          const foldersText = 'Folders: ';
-          const filesText = 'Files: ';
-          const folderIndex = output.indexOf(foldersText);
-          const fileIndex = output.indexOf(filesText);
+          if (output.includes('7-Zip')) {
+            const folderCount = getCount(output, 'Folders: ');
+            const fileCount = getCount(output, 'Files: ');
 
-          const folderCount = output
-            .substring(folderIndex + foldersText.length, folderIndex + foldersText.length + 2)
-            .trim();
-          const fileCount = output.substring(fileIndex + filesText.length, fileIndex + filesText.length + 2).trim();
+            console.log({ folderCount, fileCount });
 
-          console.log({ folderCount, fileCount });
+            if (folderCount > 0) {
+              // copy files to song "root"
+              await invoke(CLEANUP_ARCHIVE_FILES, { directory }).then(output => {
+                console.log(output);
+              });
+            }
+          }
         }
-      });
+      );
     }
   };
 

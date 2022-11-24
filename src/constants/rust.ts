@@ -5,3 +5,4 @@ export const WRITE_TO_LOG = 'write_to_log';
 export const GET_RANDOM_SONGS = 'get_random_songs';
 export const SEARCH_CHORUS_SONGS = 'search_chorus_songs';
 export const DOWNLOAD_CHORUS_FILE = 'download_chorus_file';
+export const CLEANUP_ARCHIVE_FILES = 'cleanup_archive_files';

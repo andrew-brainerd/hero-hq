@@ -1,7 +1,7 @@
 use display_json::{DisplayAsJsonPretty, DebugAsJsonPretty};
 use serde::{Deserialize, Serialize};
 use serde_json::Number;
-use std::collections::HashMap;
+use std::{collections::HashMap, process::Command};
 
 use crate::{api, logging::write_to_log, compress};
 
@@ -104,4 +104,21 @@ pub async fn download_song_file(url: &str, directory: &str, filename: &str, arch
             Ok("Download failed. Check the log for more info.".to_owned())
         }
     }
+}
+
+pub async fn cleanup_archive_files(directory: &str) -> Result<String, ()> {
+    write_to_log(format!("Cleaning up archive files at {directory}"));
+    let archive_path = format!("{directory}\\archive");
+
+    let command_output = Command::new("ls")
+        .arg("-1aF")
+        .current_dir(directory)
+        .output()
+        .unwrap()
+        .stdout;
+
+    let string_output = String::from_utf8(command_output).unwrap().to_string();
+    write_to_log(string_output.to_owned());
+
+    Ok(archive_path)
 }

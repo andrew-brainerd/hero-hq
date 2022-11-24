@@ -35,8 +35,6 @@ async fn upload_song(directory: &str, output_file: &str, key: &str) -> Result<St
     remove_file(&zip_path).unwrap();
     logging::write_to_log(format!("Removed zip file {zip_path}"));
 
-    // audio::upload_complete();
-
     Ok(key.to_owned())
 }
 
@@ -65,6 +63,11 @@ async fn download_chorus_file(url: &str, directory: &str, filename: &str, archiv
 }
 
 #[tauri::command]
+async fn cleanup_archive_files(directory: &str) -> Result<String, ()> {
+    chorus::cleanup_archive_files(directory).await
+}
+
+#[tauri::command]
 async fn write_to_log(message: &str) -> Result<String, ()> {
     logging::write_to_log(message.to_string());
 
@@ -84,6 +87,7 @@ fn main() {
             get_random_songs,
             search_chorus_songs,
             download_chorus_file,
+            cleanup_archive_files,
             write_to_log
         ])
         .run(tauri::generate_context!())

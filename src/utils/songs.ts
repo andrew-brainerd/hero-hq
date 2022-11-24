@@ -16,6 +16,7 @@ export const getLocalSongData = (parent: string, directory: string, uploadedSong
     parentDirectory: parent,
     isUploading: false,
     isUploaded,
+    isDownloading: false,
     isDownloaded: !isUploaded
   };
 };
@@ -36,6 +37,7 @@ export const getSongFromKey = (directory: string, key: string): Song => {
     directory,
     isUploading: false,
     isUploaded: true,
+    isDownloading: false,
     isDownloaded: false
   };
 };

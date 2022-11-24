@@ -2,25 +2,6 @@ use serde::Deserialize;
 use std::fs::{create_dir, File};
 use std::io::{BufWriter, Write};
 
-// pub async fn download_file(
-//     url: &str,
-//     directory: &str,
-//     filename: &str,
-// ) -> Result<String, reqwest::Error> {
-//     let response = reqwest::get(url).await?;
-
-//     let file_content = response.text().await?;
-
-//     let file_path = format!("{directory}\\{filename}");
-
-//     let _ = create_dir(directory);
-//     let mut file = File::create(&file_path).unwrap();
-
-//     copy(&mut file_content.as_bytes(), &mut file).unwrap();
-
-//     Ok(filename.to_owned())
-// }
-
 pub async fn download_file(
     url: &str,
     directory: &str,
@@ -36,8 +17,8 @@ pub async fn download_file(
     let file = File::create(&file_path).unwrap();
 
     let mut buf_writer = BufWriter::new(file);
-    buf_writer.write(&file_content);
-    buf_writer.flush();
+    let _ = buf_writer.write(&file_content);
+    let _ = buf_writer.flush();
 
     Ok(filename.to_owned())
 }
