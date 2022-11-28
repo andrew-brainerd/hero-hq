@@ -1,9 +1,30 @@
 .song {
   background-color: darkblue;
   border: 2px solid black;
-  cursor: pointer;
+  display: flex;
+  font-size: 26px;
   margin-top: 5px;
   padding: 7px 5px;
+}
+
+.song img {
+  margin-right: 25px;
+  width: 100px;
+}
+
+.song .album-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  text-align: left;
+}
+
+.song .album-info .track {
+  font-size: 1.2em;
+}
+
+.song .album-info .artist {
+  font-size: 0.9em;
 }
 
 .song.uploading {

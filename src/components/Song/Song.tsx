@@ -1,6 +1,7 @@
-import { useContext } from 'preact/hooks';
+import { useContext, useEffect, useState } from 'preact/hooks';
 import cn from 'classnames';
-import { appDataDir } from '@tauri-apps/api/path';
+import { appDataDir, join } from '@tauri-apps/api/path';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { invoke } from '@tauri-apps/api/tauri';
 import HeroContext from '../../context';
 import { Song as SongProps } from '../../types';
@@ -10,10 +11,18 @@ import { getBucketKey } from '../../utils/songs';
 
 import './Song.css';
 
+const defaultAlbumArt =
+  'https://images.radiox.co.uk/images/68311?crop=16_9&width=660&relax=1&signature=6KC8hEFQyelQ2dSZqTHVWfVucr4=';
+
 const Song = (props: SongProps) => {
   const { artist, track, directory, isUploading, isUploaded, isDownloading } = props;
 
+  const [albumArtSrc, setAlbumArtSrc] = useState(defaultAlbumArt);
   const { songUploading, songUploaded, songDownloading, songDownloaded } = useContext(HeroContext);
+
+  useEffect(() => {
+    getAlbumArtSrc().then(src => setAlbumArtSrc(src));
+  }, [track]);
 
   const upload = async (bucketKey: string) => {
     const appDataDirPath = await appDataDir();
@@ -34,12 +43,38 @@ const Song = (props: SongProps) => {
     });
   };
 
+  const getAlbumArtSrc = async () => {
+    if (!directory) return '';
+
+    const filePath = await join(directory, 'album.png');
+
+    let albumArt = defaultAlbumArt;
+
+    try {
+      console.log('Getting art at', filePath);
+      albumArt = convertFileSrc(filePath);
+    } catch (e) {
+      console.log('Error happened');
+    }
+
+    return albumArt;
+  };
+
   return (
-    <div
-      className={cn('song', { uploading: isUploading }, { uploaded: isUploaded }, { downloading: isDownloading })}
-      onClick={() => (props.isUploaded ? download(getBucketKey(props)) : upload(getBucketKey(props)))}
-    >
-      {artist} - {track}
+    <div className={cn('song', { uploading: isUploading }, { uploaded: isUploaded }, { downloading: isDownloading })}>
+      <div className={'album-art'}>
+        <img src={albumArtSrc} alt={'Album Art'} />
+      </div>
+      <div className={'album-info'}>
+        <div className={'track'}>{track}</div>
+        <div className={'Artist'}>{artist}</div>
+        <button
+          className={'control'}
+          onClick={() => (props.isUploaded ? download(getBucketKey(props)) : upload(getBucketKey(props)))}
+        >
+          {props.isUploaded ? 'Download' : 'Upload'}
+        </button>
+      </div>
     </div>
   );
 };
