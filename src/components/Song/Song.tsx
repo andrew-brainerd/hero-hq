@@ -68,6 +68,8 @@ const Song = (props: SongProps) => {
       <div className={'album-info'}>
         <div className={'track'}>{track}</div>
         <div className={'Artist'}>{artist}</div>
+      </div>
+      <div className={'controls'}>
         <button
           className={'control'}
           onClick={() => (props.isUploaded ? download(getBucketKey(props)) : upload(getBucketKey(props)))}
