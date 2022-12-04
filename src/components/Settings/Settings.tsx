@@ -27,16 +27,18 @@ const Settings = ({ isOpen, close }: SettingsProps) => {
 
   const openSongDirectory = async (directory: string) => {
     if (directory && directory.includes('hero') && directory.includes('songs')) {
-      await invoke<Array<Array<string>>>(GET_ALL_SONGS, { directory }).then(([songDirectories, uploadedSongs]) => {
-        const myLocalSongs = getLocalSongs(directory, songDirectories, uploadedSongs);
-        const myDownloadableSongs = getDownloadableSongs(directory, myLocalSongs, uploadedSongs);
+      await invoke<Array<Array<string>>>(GET_ALL_SONGS, { directory }).then(
+        async ([songDirectories, uploadedSongs]) => {
+          const myLocalSongs = getLocalSongs(directory, songDirectories, uploadedSongs);
+          const myDownloadableSongs = getDownloadableSongs(directory, myLocalSongs, uploadedSongs);
 
-        saveSongDirectory(directory);
-        setLocalSongs(myLocalSongs);
-        setDownloadableSongs(myDownloadableSongs);
-        setErrorMessage('');
-        close();
-      });
+          await saveSongDirectory(directory);
+          setLocalSongs(myLocalSongs);
+          setDownloadableSongs(myDownloadableSongs);
+          setErrorMessage('');
+          close();
+        }
+      );
     } else {
       setLocalSongs([]);
       setErrorMessage('Invalid songs directory provided. Please try again.');

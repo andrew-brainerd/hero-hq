@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@babel/core': ^7.12.10
+  '@lottiefiles/react-lottie-player': ^3.4.9
   '@preact/preset-vite': ^2.3.0
   '@tauri-apps/api': ^1.1.0
   '@tauri-apps/cli': ^1.1.0
@@ -19,6 +20,7 @@ specifiers:
   vite: ^3.0.7
 
 dependencies:
+  '@lottiefiles/react-lottie-player': 3.4.9
   '@tauri-apps/api': 1.2.0
   '@typescript-eslint/eslint-plugin': 5.43.0_yy4vf4gcvxiubmg7fqa55dqe2i
   '@typescript-eslint/parser': 5.43.0_rmayb2veg2btbq6mbmnyivgasy
@@ -417,6 +419,15 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@lottiefiles/react-lottie-player/3.4.9:
+    resolution:
+      { integrity: sha512-DDhXPGwn29bGZIJvajWNbVJNMr50esKS2nsxZ7j/tu47U+qdJ40qJMLuYFCd8gr4alYpOG1NrgACWvGW7HBrcg== }
+    peerDependencies:
+      react: 16 - 18
+    dependencies:
+      lottie-web: 5.10.0
+    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution:
@@ -1910,6 +1921,11 @@ packages:
       slice-ansi: 4.0.0
       wrap-ansi: 6.2.0
     dev: true
+
+  /lottie-web/5.10.0:
+    resolution:
+      { integrity: sha512-q2hfqKrGXNkwjSSZjKxf3fWMi0e3ZBc03qBkVWoGbwUJ7BcG+9YXjMPtmmhitzk8Nc6VQ5PRnh9yInPdfq0PZg== }
+    dev: false
 
   /lru-cache/6.0.0:
     resolution:

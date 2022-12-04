@@ -1,11 +1,14 @@
 .song {
   align-content: center;
-  background-color: darkblue;
+  background-color: #453c67;
   border: 2px solid black;
+  border-radius: 10px;
   display: flex;
   font-size: 26px;
+  height: 100px;
   margin-top: 5px;
-  padding: 7px 10px;
+  padding: 7px 25px 7px 10px;
+  transition: 0.3s background-color ease;
 }
 
 .song img {
@@ -18,15 +21,21 @@
   flex-direction: column;
   flex-grow: 1;
   justify-content: space-evenly;
+  padding-right: 25px;
   text-align: left;
+  width: 300px;
 }
 
 .song .album-info .track {
-  font-size: 1.2em;
+  font-size: 1.3em;
+  height: 32px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .song .album-info .artist {
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 .song .controls {
@@ -39,20 +48,16 @@
   width: fit-content;
 }
 
-.song.uploading {
-  background-color: darkgoldenrod;
-  color: black;
+.song-loading {
+  align-items: center;
+  display: flex;
+  width: 75px;
 }
 
-.song.downloading {
-  background-color: darkgoldenrod;
-  color: black;
+.song.uploaded {
+  padding-left: 25px;
 }
 
-.song.uploaded:not(.downloading) {
-  background-color: darkslategrey;
-}
-/* 
 .song:not(.uploaded):not(.uploading):hover {
-  color: cyan;
-} */
+  background-color: #504577;
+}
