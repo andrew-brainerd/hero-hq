@@ -58,6 +58,6 @@
   padding-left: 25px;
 }
 
-.song:not(.uploaded):not(.uploading):hover {
+.song:hover {
   background-color: #504577;
 }

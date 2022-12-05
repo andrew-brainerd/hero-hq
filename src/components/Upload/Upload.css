@@ -2,10 +2,10 @@
   position: relative;
 }
 
-.upload .search {
+.search {
   margin: 5px 0 15px 0;
 }
 
-.upload .search input {
+.search input {
   width: 250px;
 }
