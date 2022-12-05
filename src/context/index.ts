@@ -10,6 +10,7 @@ const initialState = {
   },
   localSongs: [],
   downloadableSongs: [],
+  isProcessing: false,
   setLocalSongs: () => {
     log('setLocalSongs');
   },
@@ -27,6 +28,9 @@ const initialState = {
   },
   songDownloaded: () => {
     log('songDownloaded');
+  },
+  setIsProcessing: () => {
+    log('setIsProcessing');
   }
 } as AppState;
 

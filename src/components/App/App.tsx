@@ -58,13 +58,15 @@ export const App = () => {
     isSettingsOpen,
     localSongs,
     downloadableSongs,
+    isProcessing,
     setIsSettingsOpen,
     setLocalSongs,
     setDownloadableSongs,
     songUploading,
     songUploaded,
     songDownloading,
-    songDownloaded
+    songDownloaded,
+    setIsProcessing
   };
 
   return (

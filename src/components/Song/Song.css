@@ -11,7 +11,12 @@
   transition: 0.3s background-color ease;
 }
 
-.song img {
+.song .album-art {
+  align-items: center;
+  display: flex;
+}
+
+.song .album-art img {
   margin-right: 25px;
   width: 100px;
 }
@@ -46,6 +51,15 @@
 .song .controls .control {
   font-size: 18px;
   width: fit-content;
+}
+
+.song .controls .control:disabled {
+  opacity: 0.8;
+}
+
+.song .controls .control:disabled:hover {
+  border: 1px solid transparent;
+  cursor: default;
 }
 
 .song-loading {

@@ -21,7 +21,8 @@ const Song = (props: SongProps) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [albumArtSrc, setAlbumArtSrc] = useState(defaultAlbumArt);
-  const { songUploading, songUploaded, songDownloading, songDownloaded } = useContext(HeroContext);
+  const { isProcessing, songUploading, songUploaded, songDownloading, songDownloaded, setIsProcessing } =
+    useContext(HeroContext);
 
   useEffect(() => {
     if (!isUploaded) {
@@ -38,10 +39,12 @@ const Song = (props: SongProps) => {
     const appDataDirPath = await appDataDir();
     const outputFile = `${appDataDirPath}\\${bucketKey}`;
 
+    setIsProcessing(true);
     setIsLoading(true);
     songUploading(bucketKey);
 
     await invoke<string>(UPLOAD_SONG, { directory, outputFile, key: bucketKey }).then(uploadedKey => {
+      setIsProcessing(false);
       songUploaded(uploadedKey);
       setIsLoading(false);
       notify({ title: 'Song Uploaded', body: uploadedKey });
@@ -49,10 +52,12 @@ const Song = (props: SongProps) => {
   };
 
   const download = async (bucketKey: string) => {
+    setIsProcessing(true);
     setIsLoading(true);
     songDownloading(bucketKey);
 
     await invoke<string>(DOWNLOAD_SONG, { directory, key: bucketKey }).then(downloadedKey => {
+      setIsProcessing(false);
       songDownloaded(downloadedKey);
       notify({ title: 'Song Downloaded', body: downloadedKey });
     });
@@ -87,6 +92,7 @@ const Song = (props: SongProps) => {
           <button
             className={'control'}
             onClick={() => (props.isUploaded ? download(getBucketKey(props)) : upload(getBucketKey(props)))}
+            disabled={isProcessing}
           >
             {props.isUploaded ? 'Download' : 'Upload'}
           </button>

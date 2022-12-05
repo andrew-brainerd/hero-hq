@@ -3,12 +3,14 @@ export interface AppState {
   setIsSettingsOpen: (isOpen: boolean) => void;
   localSongs: SongList;
   downloadableSongs: SongList;
+  isProcessing: boolean;
   setLocalSongs: (songs: SongList) => void;
   setDownloadableSongs: (songs: SongList) => void;
   songUploading: (key: string) => void;
   songUploaded: (key: string) => void;
   songDownloading: (key: string) => void;
   songDownloaded: (key: string) => void;
+  setIsProcessing: (isProcessing: boolean) => void;
 }
 export interface Song {
   artist: string;
