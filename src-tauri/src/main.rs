@@ -13,11 +13,12 @@ mod logging;
 
 use chorus::SongsResponse;
 use dotenv::dotenv;
+use hero::LocalSong;
 use std::{env, fs::remove_file};
 use tauri_plugin_store::PluginBuilder;
 
 #[tauri::command]
-async fn get_all_songs(directory: &str) -> Result<(Vec<String>, Vec<String>), ()> {
+async fn get_all_songs(directory: &str) -> Result<(Vec<LocalSong>, Vec<String>), ()> {
     let local_songs = hero::get_local_songs(directory).await.unwrap();
     let uploaded_songs = hero::get_uploaded_songs().await.unwrap();
 

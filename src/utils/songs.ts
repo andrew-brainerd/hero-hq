@@ -2,17 +2,13 @@ import { Song } from '../types';
 
 export const isValidSong = (song: Song) => !!song.track && !song.artist.includes('Guitar Hero');
 
-export const getLocalSongData = (parent: string, directory: string, uploadedSongs: Array<string>): Song => {
-  // Example: 'H:\\Games\\clonehero-win64\\songs\\Audioslave - Exploder'
-  const songData = directory.split('\\')[4].split('-');
-  const artist = songData[0]?.trim();
-  const track = songData[1]?.trim();
-  const isUploaded = !!uploadedSongs.find(song => song.includes(artist) && song.includes(track));
+export const getLocalSongData = (parent: string, localSong: Song, uploadedSongs: Array<string>): Song => {
+  const isUploaded = !!uploadedSongs.find(song => song.includes(localSong.artist) && song.includes(localSong.track));
 
   return {
-    directory,
-    artist,
-    track,
+    directory: localSong.directory,
+    artist: localSong.artist,
+    track: localSong.track,
     parentDirectory: parent,
     isUploading: false,
     isUploaded,
@@ -21,8 +17,8 @@ export const getLocalSongData = (parent: string, directory: string, uploadedSong
   };
 };
 
-export const getLocalSongs = (parent: string, songDirectories: Array<string>, uploadedSongs: Array<string>) =>
-  songDirectories.map(sd => getLocalSongData(parent, sd, uploadedSongs)).filter(isValidSong);
+export const getLocalSongs = (parent: string, songs: Array<Song>, uploadedSongs: Array<string>) =>
+  songs.map(song => getLocalSongData(parent, song, uploadedSongs)).filter(isValidSong);
 
 export const getBucketKey = (song: Song) => `${song.artist} - ${song.track}.zip`;
 

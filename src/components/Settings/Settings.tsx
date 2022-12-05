@@ -5,6 +5,7 @@ import HeroContext from '../../context';
 import { GET_ALL_SONGS } from '../../constants/rust';
 import { getSongDirectory, saveSongDirectory } from '../../utils/store';
 import { getLocalSongs, getDownloadableSongs } from '../../utils/songs';
+import { Song } from '../../types';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -27,10 +28,10 @@ const Settings = ({ isOpen, close }: SettingsProps) => {
 
   const openSongDirectory = async (directory: string) => {
     if (directory && directory.includes('hero') && directory.includes('songs')) {
-      await invoke<Array<Array<string>>>(GET_ALL_SONGS, { directory }).then(
-        async ([songDirectories, uploadedSongs]) => {
-          const myLocalSongs = getLocalSongs(directory, songDirectories, uploadedSongs);
-          const myDownloadableSongs = getDownloadableSongs(directory, myLocalSongs, uploadedSongs);
+      await invoke<Array<Array<Song | string>>>(GET_ALL_SONGS, { directory }).then(
+        async ([localSongs, uploadedSongs]) => {
+          const myLocalSongs = getLocalSongs(directory, localSongs as Array<Song>, uploadedSongs as Array<string>);
+          const myDownloadableSongs = getDownloadableSongs(directory, myLocalSongs, uploadedSongs as Array<string>);
 
           await saveSongDirectory(directory);
           setLocalSongs(myLocalSongs);
