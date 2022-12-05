@@ -26,12 +26,17 @@ async fn get_all_songs(directory: &str) -> Result<(Vec<LocalSong>, Vec<String>),
 }
 
 #[tauri::command]
-async fn upload_song(directory: &str, output_file: &str, key: &str) -> Result<String, ()> {
-    let zip_path = hero::zip_song(directory, output_file);
+async fn upload_song(directory: &str, zip_file: &str, key: &str, image_file: &str, image_key: &str) -> Result<String, ()> {
+    logging::write_to_log(format!("Directory: {directory} | Output: {zip_file} | Key: {key}"));
+
+    let zip_path = hero::zip_song(directory, zip_file);
     logging::write_to_log(format!("Zipped Song: {zip_path}"));
 
-    let uploaded_song = hero::upload_zip_to_s3(output_file, key).await;
+    let uploaded_song = hero::upload_file_to_s3(zip_file, key).await;
     logging::write_to_log(format!("Uploaded Song: {uploaded_song}"));
+
+    let uploaded_album_art = hero::upload_file_to_s3(image_file, image_key).await;
+    logging::write_to_log(format!("Uploaded Album Art: {uploaded_album_art}"));
 
     remove_file(&zip_path).unwrap();
     logging::write_to_log(format!("Removed zip file {zip_path}"));

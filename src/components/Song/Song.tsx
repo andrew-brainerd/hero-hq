@@ -37,13 +37,20 @@ const Song = (props: SongProps) => {
 
   const upload = async (bucketKey: string) => {
     const appDataDirPath = await appDataDir();
-    const outputFile = `${appDataDirPath}\\${bucketKey}`;
+    const zipFile = `${appDataDirPath}\\${bucketKey}`.replace('\\\\', '\\');
+    const imageFile = `${directory}\\album.png`.replace('\\\\', '\\');
 
     setIsProcessing(true);
     setIsLoading(true);
     songUploading(bucketKey);
 
-    await invoke<string>(UPLOAD_SONG, { directory, outputFile, key: bucketKey }).then(uploadedKey => {
+    await invoke<string>(UPLOAD_SONG, {
+      directory,
+      zipFile,
+      key: bucketKey,
+      imageFile,
+      imageKey: `artwork/${bucketKey.replace('.zip', '.png')}`
+    }).then(uploadedKey => {
       setIsProcessing(false);
       songUploaded(uploadedKey);
       setIsLoading(false);

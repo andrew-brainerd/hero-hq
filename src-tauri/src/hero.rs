@@ -118,9 +118,9 @@ pub async fn get_uploaded_songs() -> Result<Vec<String>, ()> {
     Ok(songs)
 }
 
-pub async fn upload_zip_to_s3(filename: &str, key: &str) -> String {
-    logging::write_to_log(format!("Uploading zip to S3: {}", key));
-    let _uploaded = aws::upload_object(filename, key).await.unwrap();
+pub async fn upload_file_to_s3(filename: &str, key: &str) -> String {
+    logging::write_to_log(format!("Uploading file to S3: {}", key));
+    let _uploaded_zip = aws::upload_object(filename, key).await.unwrap();
 
     key.to_owned()
 }
