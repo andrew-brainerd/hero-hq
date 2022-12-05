@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import cn from 'classnames';
 import HeroContext from '../../context';
 import { SongList } from '../../types';
@@ -10,12 +10,29 @@ import Download from '../Download/Download';
 import Chorus from '../Chorus/Chorus';
 
 import './App.css';
+import store from '../../utils/store';
+import useAsyncEffect from '../../hooks/useAsyncEffect';
 
 export const App = () => {
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [selectedView, setSelectedView] = useState('upload');
   const [localSongs, setLocalSongs] = useState<SongList>([]);
   const [downloadableSongs, setDownloadableSongs] = useState<SongList>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const getSelectedView = async () => (await store.get('view')) as string;
+
+  useAsyncEffect<string>(async () => {
+    const view = await getSelectedView();
+
+    if (isInitialLoad && view) {
+      setIsInitialLoad(false);
+      setSelectedView(view);
+    } else {
+      await store.set('view', selectedView);
+    }
+  }, [selectedView]);
 
   const songUploading = (uploadingKey: string) => {
     setLocalSongs(
