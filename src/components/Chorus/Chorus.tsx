@@ -1,62 +1,12 @@
 import { useState } from 'preact/hooks';
+import cn from 'classnames';
 import { invoke } from '@tauri-apps/api/tauri';
+import { ChorusSong, ChorusSongList, DirectLinks } from '../../types';
 import { SEARCH_CHORUS_SONGS, DOWNLOAD_CHORUS_FILE, CLEANUP_ARCHIVE_FILES } from '../../constants/rust';
 import { getSongDirectory } from '../../utils/store';
+import Song from '../Song/Song';
 
-interface DirectLinks {
-  [key: string]: string;
-}
-
-interface ChorusSong {
-  id: number;
-  name: string;
-  artist: string;
-  album: string;
-  genre: string;
-  year: string;
-  charter: string;
-  length: number;
-  effectiveLength: number;
-  tierBand: number;
-  tierGuitar: number;
-  tierBass: number;
-  tierRhythm: number;
-  tierDrums: number;
-  tierVocals: number;
-  tierKeys: number;
-  tierGuitarghl: number;
-  tierBassghl: number;
-  diffGuitar: number;
-  diffBass: number;
-  diffRhythm: number;
-  diffDrums: number;
-  diffKeys: number;
-  diffGuitarghl: number;
-  diffGassghl: number;
-  isPack: boolean;
-  hasForced: boolean;
-  hasTap: boolean;
-  hasSections: boolean;
-  hasStarPower: boolean;
-  hasSoloSections: boolean;
-  is120: boolean;
-  hasStems: boolean;
-  hasVideo: boolean;
-  hasLyrics: boolean;
-  hasNoAudio: boolean;
-  needsRenaming: boolean;
-  isFolder: boolean;
-  hasBrokenNotes: boolean;
-  hasBackground: boolean;
-  lastModified: string;
-  uploadedAt: string;
-  link: string;
-  directLinks: DirectLinks;
-}
-
-interface ChorusSongList {
-  songs: Array<ChorusSong>;
-}
+import './Chorus.css';
 
 const getFilename = (link: string) => {
   switch (link) {
@@ -78,22 +28,26 @@ const getCount = (str: string, text: string) => {
   return parseInt(stringValue);
 };
 
+const getAlbumArt = (links: DirectLinks) => {
+  const albumLink = Object.keys(links).find(link => link.includes('album.'));
+
+  return albumLink ? links[albumLink].replace('&export=download', '') : undefined;
+};
+
 const Chorus = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('All Time Low');
+  const [searchTerm, setSearchTerm] = useState('');
   const [songList, setSongList] = useState<Array<ChorusSong>>([]);
 
   const searchChorus = async (query: string) => {
     setIsLoading(true);
     await invoke<ChorusSongList>(SEARCH_CHORUS_SONGS, { query }).then(({ songs }) => {
-      console.log('Search Songs', songs);
       setSongList(songs);
       setIsLoading(false);
     });
   };
 
   const download = async (song: ChorusSong) => {
-    console.log('Downloading Song', song);
     for (const link of Object.keys(song.directLinks)) {
       const url = song.directLinks[link];
       const songDirectory = await getSongDirectory();
@@ -127,7 +81,7 @@ const Chorus = () => {
 
   return (
     <div className={'chorus'}>
-      <div className={'row'}>
+      <div className={cn('row', 'search')}>
         <input
           type="text"
           placeholder={'Song, Artist, Genre, etc.'}
@@ -140,17 +94,22 @@ const Chorus = () => {
         <div className={'loading'}>Loading...</div>
       ) : (
         <div className={'container'}>
-          {songList.map(song => (
-            <>
-              <div
-                className={'chorus-song'}
-                style={{ marginTop: '15px', cursor: 'pointer' }}
-                onClick={() => download(song)}
-              >
-                {song.artist} - {song.name} {!!song.directLinks['archive'] ? '[Archive]' : ''}
-              </div>
-            </>
-          ))}
+          {songList.map(song => {
+            const songData = {
+              track: song.name,
+              artist: song.artist,
+              isUploading: false,
+              isUploaded: false,
+              isDownloading: false,
+              isDownloaded: false,
+              isChorus: true,
+              albumArt: '' //getAlbumArt(song.directLinks)
+            };
+
+            console.log('Chorus Song', song);
+
+            return <Song {...songData} onClick={() => download(song)} />;
+          })}
         </div>
       )}
     </div>

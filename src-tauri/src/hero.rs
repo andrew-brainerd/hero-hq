@@ -112,7 +112,7 @@ pub async fn download_zip_from_s3(directory: &str, key: &str) -> String {
 }
 
 pub async fn get_uploaded_songs() -> Result<Vec<String>, ()> {
-    let bucket_objects = aws::get_bucket_objects().await;
+    let bucket_objects = aws::get_bucket_songs().await;
     let songs = bucket_objects.unwrap();
 
     Ok(songs)

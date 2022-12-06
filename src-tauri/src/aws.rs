@@ -48,7 +48,7 @@ pub async fn get_bucket() -> Result<String, Error> {
     Ok(hq_bucket)
 }
 
-pub async fn get_bucket_objects() -> Result<Vec<String>, Error> {
+pub async fn get_bucket_songs() -> Result<Vec<String>, Error> {
     let client: Client = create_client().await;
     let bucket = get_bucket().await.unwrap();
     let objects = client.list_objects_v2().bucket(bucket).send().await?;
@@ -57,7 +57,10 @@ pub async fn get_bucket_objects() -> Result<Vec<String>, Error> {
 
     for obj in objects.contents().unwrap_or_default() {
         let key = obj.key().unwrap().to_owned();
-        song_list.push(key);
+
+        if !key.contains("artwork/") {
+            song_list.push(key);
+        }
     }
 
     Ok(song_list)

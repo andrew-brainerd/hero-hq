@@ -17,7 +17,7 @@ const defaultAlbumArt =
   'https://images.radiox.co.uk/images/68311?crop=16_9&width=660&relax=1&signature=6KC8hEFQyelQ2dSZqTHVWfVucr4=';
 
 const Song = (props: SongProps) => {
-  const { artist, track, directory, isUploading, isUploaded, isDownloading } = props;
+  const { artist, track, directory, isUploading, isUploaded, isDownloading, isDownloaded, isChorus } = props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [albumArtSrc, setAlbumArtSrc] = useState(defaultAlbumArt);
@@ -25,13 +25,15 @@ const Song = (props: SongProps) => {
     useContext(HeroContext);
 
   useEffect(() => {
-    if (!isUploaded) {
+    if (isDownloaded) {
       getAlbumArtSrc().then(src => {
         setAlbumArtSrc(src);
         setTimeout(() => {
           setIsLoading(false);
         }, 1000);
       });
+    } else if (isChorus && props.albumArt) {
+      setAlbumArtSrc(props.albumArt);
     }
   }, [track]);
 
@@ -72,6 +74,14 @@ const Song = (props: SongProps) => {
     return (await exists(filePath)) ? fileSrc : defaultAlbumArt;
   };
 
+  const handleClick = () => {
+    if (props.isUploaded) {
+      download(getBucketKey(props));
+    } else {
+      upload(getBucketKey(props));
+    }
+  };
+
   return (
     <div className={cn('song', { uploading: isUploading }, { uploaded: isUploaded }, { downloading: isDownloading })}>
       {!props.isUploaded ? (
@@ -91,10 +101,10 @@ const Song = (props: SongProps) => {
         <div className={'controls'}>
           <button
             className={'control'}
-            onClick={() => (props.isUploaded ? download(getBucketKey(props)) : upload(getBucketKey(props)))}
+            onClick={() => (props.onClick ? props.onClick(props.track) : handleClick())}
             disabled={isProcessing}
           >
-            {props.isUploaded ? 'Download' : 'Upload'}
+            {props.isUploaded || props.isChorus ? 'Download' : 'Upload'}
           </button>
         </div>
       )}
