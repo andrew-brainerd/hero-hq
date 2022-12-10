@@ -17,25 +17,25 @@
     "pineapple": "pnpm dist && pnpm kevin"
   },
   "dependencies": {
-    "@lottiefiles/react-lottie-player": "^3.4.9",
-    "@tauri-apps/api": "^1.1.0",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
-    "@typescript-eslint/parser": "^5.43.0",
+    "@lottiefiles/react-lottie-player": "^3.5.0",
+    "@tauri-apps/api": "^1.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
     "classnames": "^2.3.2",
-    "eslint": "^8.27.0",
-    "preact": "^10.10.1",
+    "eslint": "^8.29.0",
+    "preact": "^10.11.3",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@preact/preset-vite": "^2.3.0",
-    "@tauri-apps/cli": "^1.1.0",
-    "@types/node": "^18.7.14",
+    "@babel/core": "^7.20.5",
+    "@preact/preset-vite": "^2.4.0",
+    "@tauri-apps/cli": "^1.2.2",
+    "@types/node": "^18.11.12",
     "husky": "^8.0.2",
-    "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1",
-    "typescript": "^4.6.4",
-    "vite": "^3.0.7"
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.1",
+    "typescript": "^4.9.4",
+    "vite": "^3.2.5"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
