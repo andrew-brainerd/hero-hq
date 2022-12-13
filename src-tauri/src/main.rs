@@ -4,7 +4,6 @@
 )]
 
 mod api;
-mod audio;
 mod aws;
 mod chorus;
 mod compress;

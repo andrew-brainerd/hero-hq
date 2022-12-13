@@ -1,4 +1,4 @@
-import { useContext, useState } from 'preact/hooks';
+import { useContext, useState } from 'react';
 import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api/tauri';
 import HeroContext from '../../context';

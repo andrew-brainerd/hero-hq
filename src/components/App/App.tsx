@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useState } from 'react';
 import cn from 'classnames';
 import HeroContext from '../../context';
 import { SongList } from '../../types';

@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useState } from 'react';
 import cn from 'classnames';
 import { invoke } from '@tauri-apps/api/tauri';
 import { ChorusSong, ChorusSongList, DirectLinks } from '../../types';

@@ -1,4 +1,4 @@
-import { useEffect } from 'preact/hooks';
+import { useEffect } from 'react';
 
 const useAsyncEffect = <T>(effect: () => void, dependencies?: Array<T>) => {
   useEffect(() => {

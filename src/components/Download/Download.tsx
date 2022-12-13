@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'preact/hooks';
+import { useContext, useEffect, useState } from 'react';
 import cn from 'classnames';
 import HeroContext from '../../context';
 import useDebounce from '../../hooks/useDebounce';

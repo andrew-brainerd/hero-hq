@@ -1,6 +1,6 @@
 [package]
 name = "hero-hq"
-version = "0.0.1"
+version = "0.0.0"
 description = "A Tauri App"
 authors = ["andy"]
 license = ""
@@ -11,7 +11,7 @@ rust-version = "1.57"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.1", features = [] }
+tauri-build = {version = "1.2", features = [] }
 
 [dependencies]
 aws-config = "0.51.0"
