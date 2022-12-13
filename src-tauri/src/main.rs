@@ -13,7 +13,7 @@ mod logging;
 use chorus::SongsResponse;
 use dotenv::dotenv;
 use hero::LocalSong;
-use std::{env, fs::remove_file};
+use std::fs::remove_file;
 use tauri_plugin_store::PluginBuilder;
 
 #[tauri::command]

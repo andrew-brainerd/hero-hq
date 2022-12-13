@@ -33,7 +33,7 @@
 
 .song .album-info .track {
   font-size: 1.3em;
-  height: 32px;
+  height: 35px;
   overflow-x: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

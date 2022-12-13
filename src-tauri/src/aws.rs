@@ -5,7 +5,7 @@ use std::io::{BufWriter, Write};
 use std::{fs::File, path::Path};
 use tauri::api::path::home_dir;
 use tokio_stream::StreamExt;
-use crate::logging;
+use crate::logging::write_to_log;
 
 async fn create_client() -> Client {
     let region_provider = RegionProviderChain::default_provider().or_else("us-east-1");
@@ -34,14 +34,15 @@ pub async fn download_object(directory: &str, key: &str) -> Result<String, std::
     }
     buf_writer.flush()?;
 
-    logging::write_to_log(format!("Downloaded file \"{key}\" to {directory}"));
+    write_to_log(format!("Downloaded file \"{key}\" to {directory}"));
 
     Ok(file_path.to_owned())
 }
 
 pub async fn get_bucket() -> Result<String, Error> {
-    let home_dir = home_dir().unwrap().display().to_string();
-    let conf = Ini::load_from_file(format!("{home_dir}\\.aws\\credentials")).unwrap();
+    let user_dir = home_dir().unwrap().display().to_string();
+    let aws_creds_path = Path::new(&user_dir).join(".aws").join("credentials");
+    let conf = Ini::load_from_file(aws_creds_path).unwrap();
     let section = conf.section(Some("hero-hq")).unwrap();
     let hq_bucket = section.get("bucket").unwrap().to_owned();
 
@@ -78,7 +79,7 @@ pub async fn upload_object(filename: &str, key: &str) -> Result<String, Error> {
         .send()
         .await?;
 
-    logging::write_to_log(format!("Uploaded file: \"{filename}\""));
+    write_to_log(format!("Uploaded file: \"{filename}\""));
 
     Ok(filename.to_owned())
 }

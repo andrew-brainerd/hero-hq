@@ -27,7 +27,8 @@ const Settings = ({ isOpen, close }: SettingsProps) => {
   };
 
   const openSongDirectory = async (directory: string) => {
-    if (directory && directory.includes('hero') && directory.includes('songs')) {
+    const songDirectory = directory.toLowerCase();
+    if (songDirectory.includes('hero') && songDirectory.includes('songs')) {
       await invoke<Array<Array<Song | string>>>(GET_ALL_SONGS, { directory }).then(
         async ([localSongs, uploadedSongs]) => {
           const myLocalSongs = getLocalSongs(directory, localSongs as Array<Song>, uploadedSongs as Array<string>);
@@ -59,7 +60,7 @@ const Settings = ({ isOpen, close }: SettingsProps) => {
   return isOpen ? (
     <div className={'settings'}>
       {errorMessage ? <div className={'error'}>{errorMessage}</div> : null}
-      <div class="row">
+      <div className='row'>
         <div className={'song-select'}>
           <button type="button" onClick={() => openDialog()}>
             Select Songs Directory

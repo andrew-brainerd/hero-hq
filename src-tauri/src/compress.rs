@@ -18,23 +18,23 @@ pub fn create_zip_file(directory: &str, filename: &str) -> Result<String, ZipErr
     Ok(zip_file)
 }
 
-pub fn get_file_list(filename: &str, output_directory: &str) -> Result<String, ()> {
-    let zip_path = format!("{output_directory}\\{filename}");
+// pub fn get_file_list(filename: &str, output_directory: &str) -> Result<String, ()> {
+//     let zip_path = format!("{output_directory}\\{filename}");
 
-    write_to_log(format!("{output_directory}\\{filename}"));
+//     write_to_log(format!("{output_directory}\\{filename}"));
 
-    let command_output = Command::new("7z")
-        .arg("l")
-        .arg(&zip_path)
-        .output()
-        .unwrap()
-        .stdout;
+//     let command_output = Command::new("7z")
+//         .arg("l")
+//         .arg(&zip_path)
+//         .output()
+//         .unwrap()
+//         .stdout;
 
-    let string_output = String::from_utf8(command_output).unwrap().to_string();
-    write_to_log(string_output.to_owned());
+//     let string_output = String::from_utf8(command_output).unwrap().to_string();
+//     write_to_log(string_output.to_owned());
 
-    Ok(string_output)
-}
+//     Ok(string_output)
+// }
 
 pub fn unzip_7z_file(filename: &str, output_directory: &str) -> Result<String, ()> {
     logging::write_to_log(format!("Unzipping file: {filename} to {output_directory}"));

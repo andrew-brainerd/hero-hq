@@ -35,7 +35,7 @@ pub async fn get_local_songs(directory: &str) -> Result<Vec<LocalSong>, ()> {
                     None => write_to_log(format!("Invalid song"))
                 }
             },
-            Err(err) => write_to_log(format!("Error parsing song"))
+            Err(_err) => write_to_log(format!("Error parsing song"))
         }
     }
 

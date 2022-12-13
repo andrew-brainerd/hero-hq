@@ -106,8 +106,6 @@ const Chorus = () => {
               albumArt: '' //getAlbumArt(song.directLinks)
             };
 
-            console.log('Chorus Song', song);
-
             return <Song {...songData} onClick={() => download(song)} />;
           })}
         </div>

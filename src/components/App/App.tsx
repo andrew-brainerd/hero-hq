@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import cn from 'classnames';
 import HeroContext from '../../context';
 import { SongList } from '../../types';
@@ -71,8 +71,8 @@ export const App = () => {
 
   return (
     <HeroContext.Provider value={context}>
-      <div class="container">
-        <div class="row">
+      <div className='container'>
+        <div className='row'>
           <div className={'open-settings'}>
             <button type="button" onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
               Settings
@@ -80,7 +80,7 @@ export const App = () => {
           </div>
         </div>
         <Settings isOpen={isSettingsOpen} close={() => setIsSettingsOpen(false)} />
-        <div class="row views">
+        <div className='row views'>
           <div
             className={cn('view', { selected: selectedView === VIEWS.UPLOAD })}
             onClick={() => setSelectedView(VIEWS.UPLOAD)}
@@ -100,7 +100,7 @@ export const App = () => {
             Chorus
           </div>
         </div>
-        <div class="song-list">
+        <div className='song-list'>
           {
             {
               [VIEWS.UPLOAD]: <Upload />,
